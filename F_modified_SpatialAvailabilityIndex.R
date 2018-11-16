@@ -22,32 +22,28 @@ get_radius_size <- function(dat){
 
 Count_cells_within_neighbourhood <- function(dat1, # data of points which are centre of search area
                                        dat2, # data of points to be searched
-                                       a1, a2, # half length (unit of the distance is the unit of coordinate) of the squire which you want to count the number of avairable secondary open cells.
-                                       coordinateNames # column names for coordinates in dat1 and dat2
+                                       a1, # half length (unit of the distance is the unit of coordinate) of the squire which you want to count the number of avairable secondary open cells.
+                                       coordinateName # column name for climate variable in dat1 and dat2
                                        ){
   # Add cell ID to dat2
-  dat2$cellID <- 1:nrow(dat2)
+  dat1$cellID <- 1:nrow(dat1)
   
-  # Count the number of dat1 cells within "a" radius neighbourhood of dat2
-    dat1_in_dat2area <- lapply(dat2$cellID, function(i){
+  # Count the number of dat1 cells within "a" radius neighbourhood of dat1
+    dat2_in_dat1area <- lapply(dat1$cellID, function(i){
     
-    # Find dat1 points within (PC1 of dat2 - a) <= dat1 point <= (dat2 point + a)
+    # Find dat2 points within (dat1 point - a) <= dat2 points <= (dat1 point + a)
     # x axis
-    datlat <- dat1[(dat1[, coordinateNames[2]] <= (dat2[i, coordinateNames[2]] + a2) & dat1[, coordinateNames[2]] >= (dat2[i, coordinateNames[2]] - a2)), ]
-    # y axis
-    datlatlon <- datlat[(datlat[, coordinateNames[1]] <= (dat2[i, coordinateNames[1]] + a1) & datlat[, coordinateNames[1]] >= (dat2[i, coordinateNames[1]] - a1)), ]
+    datlat <- dat2[(dat2[, coordinateName] <= (dat1[i, coordinateName] + a1)), ]
+    datlat2 <- datlat[(datlat[, coordinateName] >= (dat1[i, coordinateName] - a1)), ]
     
     # Name dat1 points within the neighbourhood of dat2 with cell ID of dat2
     # If "dat2cellID" has ID number, the row is within the neighbourhood of dat2
-    datlatlon$dat2cellID <- rep(i, nrow(datlatlon))
-    return(datlatlon)
+    datlat2$dat1cellID <- rep(i, nrow(datlat2))
+    return(datlat2)
   }
   )
-  
-  # Count the number of cells within neighbourhood
-  dat2$dat1cellnumber <- sapply(dat1_in_dat2area, nrow)
-  
-  return(dat2)
+
+  return(dat2_in_dat1area)
 }
 
 ###################################################################################################
@@ -57,17 +53,17 @@ Count_cells_within_neighbourhood <- function(dat1, # data of points which are ce
 count_ratioWithinNeighbourhood <- function(dat1, # data of points to be searched
                                            dat2, # data of points which are centre of search area
                                            a, # two vectors of radius sizes
-                                           coordinateNames
+                                           coordinateName
 ){
   neighbours <- list()
   
   for(i in 2:length(a[[1]])){
     # Find points of a group within neighbourhood of another group of points 
     neighbours[[i]] <- Count_cells_within_neighbourhood(dat1, dat2, 
-                                                        a1 = a[[1]][i], a2 = a[[2]][i], coordinateNames)
+                                                        a1 = a[[1]][i], coordinateName)
     
     # Calculate percentage of area within the neighbourhood over NZ
-    neighbours[[i]]$ratioWithinNeighbourhood <- neighbours[[i]]$dat1cellnumber / nrow(dat1)
+    neighbours[[i]]$ratioWithinNeighbourhood <- nrow(neighbours[[i]][[1]]) / nrow(dat2)
     
   }
   return(neighbours)

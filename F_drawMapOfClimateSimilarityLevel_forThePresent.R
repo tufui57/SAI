@@ -7,8 +7,9 @@ library(raster)
 ### Draw a map of spatial availability index of current area
 #################################################################################
 
-load("spatialAvailabilityIndex_5km_of_LGM_on_PCA.data")
-
+# Load SAI values
+load("spatialAvailabilityIndex_5km_of_current_on_PCA.data")
+# Resolution of grid data (km)
 reso=5 
 
 # Reference raster of coordinate system & extent
@@ -23,7 +24,8 @@ similarityLevelRaster <- convert_dataframe_to_raster(ref = ref5, dat = scores,
 # Colour gradient for raster
 colfunc <- colorRampPalette(c("cyan", "dodgerblue4"))
 
-png("Y:\\SAIt.png")
+# Map SAI
+png("Y:\\SAIcurrent.png")
 
 plot(similarityLevelRaster,
      col=colfunc(21),
@@ -39,8 +41,9 @@ dev.off()
 ### Draw a map of spatial availability index of LGM land area
 #################################################################################
 
+# Load SAI values
 load("spatialAvailabilityIndex_5km_of_LGM_on_PCA_withinLGMland.data")
-
+# Resolution of grid data (km)
 reso=5 
 
 # Reference raster of coordinate system & extent
@@ -58,6 +61,7 @@ similarityLevelRaster <- convert_dataframe_to_raster(ref = ref5, dat = scores.lg
 # Colour gradient for raster
 colfunc <- colorRampPalette(c("cyan", "dodgerblue4"))
 
+# Map SAI
 png("Y:\\SAI15oct.png")
 
 plot(similarityLevelRaster,
