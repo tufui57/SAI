@@ -1,17 +1,35 @@
 ######################################################################################
-### Calculate spatial availability index on 2 dimentional ordination space 
+### Calculate spatial availability index (SAI) on 2 dimentional ordination space 
 ######################################################################################
+
+# Steps for the SAI calculation
+# 1. Set 20x20km2 neighbourhood window of a centre cell on geographycal map. 
+# For centre points along coastlines, the windows don't have to have 400 1km grid cells.
+# 2. Set 11 neighbourhood sizes (0, 10%, ..., 90%, 100% of the environmental breadth of cells within the window) on environmental space
+# The largest neighbourhood must cover all NZ environment space regardless of the location of centre cell on environmental space.
+# 3. Identify the cells within the neighbourhood of a centre cell at each size and variable i (i=1,2,...,k)
+# 4. Among the identified cells, identify cells within the neighbourhood for each size and variable i+1
+# 5. Repeat the step 3. You'll get 11 sets of cells.
+# 6. Calculate the ratio of the cells against all cells
+# 7. Calculate AUC of the ratio. The AUC is SAI for the centre cell.
+
+# ######################################################################################
+# # Prepare a x a km2 neighbourhood window
+# ######################################################################################
+# # For the first step, try a = 20
+# # Unit of NZTM is meter, so 10000 m = 10km = 20km/2
+# dat.x <- Count_cells_within_neighbourhood(p, dat2, 10000, "x")
+# neighbour.window <- Count_cells_within_neighbourhood(p, dat.x, 10000, "y")
 
 ######################################################################################
 # Prepare radius size vector
 ######################################################################################
-# Range of environmental variable * 0, 10%, ..., 90%, 100%
+# Breadth of environmental variable * 0, 10%, ..., 90%, 100%
 
-get_radius_size <- function(dat){
-  a <- list()
-  # Radius size for PCA axis 1 and 2
-  a[[1]] <- ((max(dat[,"PC1"]) - min(dat[,"PC1"]) ) * (c(0, 1:10) / 10)) /2
-  a[[2]] <- ((max(dat[,"PC2"]) - min(dat[,"PC2"]) ) * (c(0, 1:10) / 10)) /2
+get_radius_size <- function(dat, coordinateName){
+  
+  # NOTE the radius size MUST NOT be half of environmental variables, meaning a / 2 is not the radius you need!
+  a <- ((max(dat[,coordinateName]) - min(dat[,coordinateName]) ) * (c(0, 1:10) / 10)) 
 
   return(a)
 }
@@ -20,54 +38,19 @@ get_radius_size <- function(dat){
 ### Find points of a group within neighbourhood of another group of points 
 ######################################################################################
 
-Count_cells_within_neighbourhood <- function(dat1, # data of points which are centre of search area
+Count_cells_within_neighbourhood <- function(p, # a point at the centre of search area
                                        dat2, # data of points to be searched
                                        a1, # half length (unit of the distance is the unit of coordinate) of the squire which you want to count the number of avairable secondary open cells.
-                                       coordinateName # column name for climate variable in dat1 and dat2
+                                       coordinateName # column name for climate variable in p and dat2
                                        ){
-  # Add cell ID to dat2
-  dat1$cellID <- 1:nrow(dat1)
-  
-  # Count the number of dat1 cells within "a" radius neighbourhood of dat1
-    dat2_in_dat1area <- lapply(dat1$cellID, function(i){
-    
-    # Find dat2 points within (dat1 point - a) <= dat2 points <= (dat1 point + a)
+  # Find dat2 points within ("p" point - a) <= dat2 points <= ("p" point + a)
     # x axis
-    datlat <- dat2[(dat2[, coordinateName] <= (dat1[i, coordinateName] + a1)), ]
-    datlat2 <- datlat[(datlat[, coordinateName] >= (dat1[i, coordinateName] - a1)), ]
+    datlat <- dat2[(dat2[, coordinateName] <= (p[, coordinateName] + a1)), ]
+    datlat2 <- datlat[(datlat[, coordinateName] >= (p[, coordinateName] - a1)), ]
     
-    # Name dat1 points within the neighbourhood of dat2 with cell ID of dat2
-    # If "dat2cellID" has ID number, the row is within the neighbourhood of dat2
-    datlat2$dat1cellID <- rep(i, nrow(datlat2))
     return(datlat2)
   }
-  )
 
-  return(dat2_in_dat1area)
-}
-
-###################################################################################################
-### Count cells within neighbourhood & calculate ratio of the cells over the number of all cells
-###################################################################################################
-
-count_ratioWithinNeighbourhood <- function(dat1, # data of points to be searched
-                                           dat2, # data of points which are centre of search area
-                                           a, # two vectors of radius sizes
-                                           coordinateName
-){
-  neighbours <- list()
-  
-  for(i in 2:length(a[[1]])){
-    # Find points of a group within neighbourhood of another group of points 
-    neighbours[[i]] <- Count_cells_within_neighbourhood(dat1, dat2, 
-                                                        a1 = a[[1]][i], coordinateName)
-    
-    # Calculate percentage of area within the neighbourhood over NZ
-    neighbours[[i]]$ratioWithinNeighbourhood <- nrow(neighbours[[i]][[1]]) / nrow(dat2)
-    
-  }
-  return(neighbours)
-}
 
 ######################################################################################
 ### Calculate Spatial availability index; AUC of ratios of cells within neighbourhood
@@ -110,25 +93,78 @@ auc <-
   }
 
 
-######################################################################################
-### Calculate AUC (area under curve) doe each current grid cells
-######################################################################################
+###################################################################################################
+### Count cells within overlapped neighbourhood among multiple variables
+###################################################################################################
 
-calculate_auc_for_each_cell <- function(
-  neighbours, # result object of the function "count_ratioWithinNeighbourhood"
-  a1, # vector of radius size of PC1
-  dat2 # data frame of cells which were centre of the neighbourhood
+cells_within_neighbourhood_multivariate <- function(p, # a point at the centre of search area
+                                             dat2, # data of points to be searched
+                                             ranges, # result of get_radius_size()
+                                             coordinateNames # column name for climate variable in p and dat2
 ){
-  for(i in 1:nrow(dat2)){
+
+  neighbours.size <- list()
   
-  # Extract ratio of cells within neighbourhood at each size of radius
-  cell1 <- sapply(2:length(a1), function(j){neighbours[[j]][i,"ratioWithinNeighbourhood"]
+  for(j in 2:length(ranges[[1]])){
+    
+    neighbours <- list()
+    
+    # Get cells within 10% neighbourhood of variable 1
+    neighbours[[1]] <- Count_cells_within_neighbourhood(p, dat2,
+                                                        a1 = ranges[[1]][j], 
+                                                        coordinateNames[1])
+    for(i in 1:(length(coordinateNames)-1)){
+      
+      # Get cells within 10% neighbourhood of variable i+1
+      neighbours[[i+1]] <- Count_cells_within_neighbourhood(p, neighbours[[i]],
+                                                            a1 = ranges[[i+1]][j], 
+                                                            coordinateNames[i+1])
+    }
+    
+    neighbours.size[[j]] <- neighbours[[length(coordinateNames)]]
   }
+  
+  return(neighbours.size)
+}
+
+# # Check the number of cells within each neighbourhood
+# sapply(neighbours.size, nrow)
+# 
+# plot(dat2[, coordinateNames[1:2]])
+# points(neighbours[[1]][, coordinateNames[1:2]], col="lightblue")
+# points(neighbours[[2]][, coordinateNames[1:2]], col="green")
+# points(neighbours[[4]][, coordinateNames[1:2]], col="pink")
+# points(p[, coordinateNames[1:2]], col="red")
+
+
+###################################################################################################
+### SAI
+###################################################################################################
+
+SAI <- function(p, # a point at the centre of search area
+                dat2, # data of points to be searched
+                ranges, # result of get_radius_size()
+                coordinateNames # column name for climate variable in p and dat2
+){
+  
+  neighbours.size <- cells_within_neighbourhood_multivariate(p, # a point at the centre of search area
+                                          dat2, # data of points to be searched
+                                          ranges, # result of get_radius_size()
+                                          coordinateNames # column name for climate variable in p and dat2
   )
   
-  # AUC
-  dat2[i,"AUC"] <- auc(c(0, 1:10)*0.1, c(0, cell1))
-  }
-  return(dat2)
+  # Calculate percentage of area within the neighbourhood over NZ
+  ratio <- lapply(2:length(ranges[[1]]),
+                  function(j){
+                    # Find points of a group within neighbourhood of another group of points 
+                    nrow(neighbours.size[[j]]) / nrow(dat2)
+                  }
+  )
+  
+  ### Calculate AUC (area under curve) for each current grid cells
+  res <- auc(c(0, 1:10)*0.1, c(0, ratio))
+  
+  return(res)
 }
+
 
