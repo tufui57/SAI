@@ -7,7 +7,7 @@ genus_name = "Acaena"
 
 load(paste(".\\Scores_", genus_name,"_landcover_worldclim1_1km.data", sep = ""))
 
-dat1 <- scores
+dat1 <- scores[1:2,]
 dat2 <- scores
 
 # Load functions

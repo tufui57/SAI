@@ -1,23 +1,16 @@
 
 # data frame of occurrence data and climate data
-datapath <- "Y://Acaena_bioclim_landcover_history_worldclim1_5km.csv"
+datapath <- paste("Y://bioclim_landcover_history_worldclim",
+                  Worldclim, "_", reso, "km.csv", sep=""
+)
 dat1 <- read.csv(datapath)
 d <- dat1[is.na(dat1$landCoverChange) == F, ]
 
-# species names
-sname <- colnames(d)[grepl(paste("^", genus_name, sep = ""), colnames(d))]
-
-for(i in sname){
-  d[is.na(d[,i]),i] <- 0
-}
-
-
-
 # get env. corrdinates (PCA axes)
-pca <- prcomp(d[, paste("bioclim", c(1, 6, 12, 15), sep = "")],
+pca <- prcomp(d[, paste("bioclim", c(10, 11, 18, 19), sep = "")],
               center = TRUE,
               scale. = TRUE)
-scores <- data.frame(d[, c(colnames(d)[grep("^bioclim", colnames(d))], sname,
+scores <- data.frame(d[, c(colnames(d)[grep("^bioclim", colnames(d))], 
                            "x", "y", "preLandcover", "currentLandcover", "landCoverChange","value")], pca$x[, 1:2])
 scores$landCoverChange <- factor(scores$landCoverChange)
 scores$pre <- factor(ifelse(scores$preLandcover == 1, "NF", "nonF"))
@@ -27,4 +20,4 @@ scores$post <- factor(ifelse(scores$currentLandcover == 1, "NF",
 )
 
 ### Import PCA scores
-save(scores, file = paste(".\\Scores_", genus_name, "_landcover5km.data", sep = ""))
+save(scores, file = paste(".\\Scores_landcover1km.data", sep = ""))

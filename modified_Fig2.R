@@ -8,37 +8,43 @@
 
 # Current climate
 # 5km
-load(".\\Scores_Acaena_landcover5km.data")
+# load(".\\Scores_Acaena_landcover5km.data")
 # 1km
-load(".\\Scores_Acaena_landcover18sep.data")
+load(".\\Scores_landcover.data")
 
 # Load functions
 source(".//SAI//F_modified_SpatialAvailabilityIndex.R")
 
-# Get rid of unnneccesary columns
-scores <- scores[, -grep("^Acaena", colnames(scores))]
-
 ### Choose a cell to draw Fig. 2 for by elevation
 
+# For test
 p <- scores[10000,]
+coordinateName = "bioclim10"
 
 ######################################################################################
 ### Fig. 2 (B)
 ######################################################################################
 
 # Get radius sizes
-a <- get_radius_size(scores)
+a <- get_radius_size(scores, coordinateName)
 
 # Count number of points within neighbourhood for axis1
-neighbours <- count_ratioWithinNeighbourhood(p, # data of points to be searched
-                                             scores, # data of points which are centre of search area
-                                             a = a[[1]],
-                                             coordinateName)
+neighbours <- count_ratioWithinNeighbourhood(p, # data of points which are centre of search area
+                                             scores, # data of points to be searched
+                                             a = a,
+                                             coordinateName
+                                             )
+
+min(scores[, coordinateName])
+max(scores[, coordinateName])
+p[, coordinateName]
+a
+sapply(neighbours, "[[", 2)
 
 # Check if the above function has worked
-plot(scores[, c("PC1", "PC2")])
-points(neighbours[[2]][[1]][, c("PC1", "PC2")], col="pink")
-points(p[, c("PC1", "PC2")], col="red")
+plot(scores[, coordinateName])
+points(neighbours[[11]][[1]][, coordinateName], col="pink")
+points(p[, coordinateName], col="red")
 
 
 # Calculate SAI
