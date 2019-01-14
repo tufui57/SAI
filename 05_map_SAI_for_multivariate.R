@@ -7,24 +7,21 @@ library(raster)
 ### Draw a map of spatial availability index of current area
 #################################################################################
 
-# ### Load 1km data
-# load(".\\Scores_landcover1km.data")
-### Load 5km data
+### Load 1km data
+load(".\\Scores_landcover1km.data")
+# ### Load 5km data
 load(".\\Scores_Acaena_landcover5km.data")
 
-# # Load SAI values
-# load("SAI_south_1km_current_4var.data")
-# Load 5km SAI of current climate at the LGM
-load("SAI_5km_LGM_PC1_2.data")
-
+# Load SAI values
+load("SAI_south_1km_current_4var.data")
 # Resolution of grid data (km)
-reso=5 
+reso=1 
 
 # Reference raster of coordinate system & extent
 # This raster mustn't be used for resampling for 5km resolution.
-ref5 <- raster(print("Y:\\GIS map and Climate data\\newzealandpotentialvegetatio", reso, ".bil", sep=""))
+ref5 <- raster(paste("D:\\PhD\\GIS map and Climate data\\current_landcover", reso, "km.bil", sep=""))
 
-# Combine SAI to coordinate data
+
 sai.dat <- cbind(scores[, c("x", "y")], unlist(sai))
 colnames(sai.dat)[3] <- "AUC"
 
@@ -37,7 +34,7 @@ SAIraster <- convert_dataframe_to_raster(ref = ref5, dat = sai.dat,
 colfunc <- colorRampPalette(c("cyan", "dodgerblue4"))
 
 # Map SAI
-png("Y:\\SAI_5km.png")
+png("D:\\PhD\\SAI_south_1km_current_20kmwindow.png")
 
 plot(SAIraster,
      col=colfunc(21),
