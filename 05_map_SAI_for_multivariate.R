@@ -18,11 +18,11 @@ load(".\\Scores_Acaena_landcover5km.data")
 load("SAI_5km_LGM_PC1_2.data")
 
 # Resolution of grid data (km)
-reso=5 
+reso = 5 
 
 # Reference raster of coordinate system & extent
 # This raster mustn't be used for resampling for 5km resolution.
-ref5 <- raster(print("Y:\\GIS map and Climate data\\newzealandpotentialvegetatio", reso, ".bil", sep=""))
+ref5 <- raster(paste("Y:\\GIS map and Climate data\\newzealandpotentialvegetatio", reso, ".bil", sep=""))
 
 # Combine SAI to coordinate data
 sai.dat <- cbind(scores[, c("x", "y")], unlist(sai))
