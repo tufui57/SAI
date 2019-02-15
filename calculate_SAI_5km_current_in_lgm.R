@@ -3,7 +3,7 @@
 ######################################################################################
 
 # Load functions
-source(".//SAI//F_modified_SpatialAvailabilityIndex.R")
+source(".//SAI//F_DEBUG_SpatialAvailabilityIndex.R")
 
 ######################################################################################
 ### Data import
@@ -27,7 +27,10 @@ colnames(scores.lgm) <- gsub("bi", "bioclim", colnames(scores.lgm))
 ranges <- lapply(coordinateNames, get_radius_size, dat = scores.lgm)
 names(ranges) <- coordinateNames
 
-SAI_for_area <- function(neighbour.window.size # Size of windows to calculate the SAI (km)
+
+
+SAI_for_area <- function(neighbour.window.size, # Size of windows to calculate the SAI (km)
+                         whole
 ){
   
   sai <- list()
@@ -35,15 +38,21 @@ SAI_for_area <- function(neighbour.window.size # Size of windows to calculate th
     
     p <- scores[i, ]
     
-    ######################################################################################
-    # Prepare a x a km2 neighbourhood window
-    ######################################################################################
-    ### For the first step, try a = 20; window size = 20 x 20 km2
-    # Unit of NZTM is meter, so 10000 m = 10km = 20km/2
-    # Crop data by longitude
-    a <- neighbour.window.size * 1000 / 2
-    dat.x <- Count_cells_within_neighbourhood(p, scores.lgm, a, "x")
-    neighbour.window <- Count_cells_within_neighbourhood(p, dat.x, a, "y")
+    if(whole == F){
+      ######################################################################################
+      # Prepare a x a km2 neighbourhood window as an area to be searched
+      ######################################################################################
+      # For the first step, try a = 20
+      # Unit of NZTM is meter, so 10000 m = 10km = 20km/2
+      a <- neighbour.window.size * 1000 / 2
+      dat.x <- Count_cells_within_neighbourhood(p, scores, a, "x")
+      neighbour.window <- Count_cells_within_neighbourhood(p, dat.x, a, "y")
+      
+    }else{
+      # Whole NZ is the neghbourhood
+      neighbour.window <- scores
+      
+    }
     
     ### SAI calculation
     sai[i] <- SAI(p, # a point at the centre of search area
@@ -61,10 +70,15 @@ SAI_for_area <- function(neighbour.window.size # Size of windows to calculate th
 
 ###### SAI of current in the LGM
 
-for(i in c(10, 20, 50, 100, 1500)){
+for(i in c(10, 20, 50, 100)){
   ### i km neighbourhood window
-  sai.i<- SAI_for_area(i)
+  sai.i<- SAI_for_area(i, whole=F)
   # Save
   save(sai.i, file = paste("SAI_5km_currentInLGM_", i,"kmWindow_4var.data", sep=""))
   
 }
+
+# Whole NZ
+sai.i <- SAI_for_area(5000,  whole=T)
+# Save
+save(sai.i, file = "SAI_5km_currentInLGM_5000kmWindow_4var.data")

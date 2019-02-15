@@ -31,17 +31,16 @@ get_radius_size <- function(dat, coordinateName){
 ######################################################################################
 
 Count_cells_within_neighbourhood <- function(p, # a point at the centre of search area
-                                       dat2, # data of points to be searched
-                                       a1, # half length (unit of the distance is the unit of coordinate) of the squire which you want to count the number of avairable secondary open cells.
-                                       coordinateName # column name for climate variable in p and dat2
-                                       ){
+                                             dat2, # data of points to be searched
+                                             a1, # half length of the variable range/neighbourhood radius within which you want to count the number of points.
+                                             coordinateName # column name for climate variable in p and dat2
+){
   # Find dat2 points within ("p" point - a) <= dat2 points <= ("p" point + a)
-    # x axis
-    datlat <- dat2[(dat2[, coordinateName] <= (p[, coordinateName] + a1)), ]
-    datlat2 <- datlat[(datlat[, coordinateName] >= (p[, coordinateName] - a1)), ]
-    
-    return(datlat2)
-  }
+  dat.plus <- dat2[(dat2[, coordinateName] <= (p[, coordinateName] + a1)), ]
+  dat.minus <- dat.plus[(dat.plus[, coordinateName] >= (p[, coordinateName] - a1)), ]
+  
+  return(dat.minus)
+}
 
 
 ######################################################################################
@@ -101,18 +100,18 @@ cells_within_neighbourhood_multivariate <- function(p, # a point at the centre o
     
     neighbours <- list()
     
-    # Get cells within 10% neighbourhood of variable 1
+    # Get cells within (j -1)*10 % neighbourhood of variable 1
     neighbours[[1]] <- Count_cells_within_neighbourhood(p, dat2,
                                                         a1 = ranges[[1]][j] / 2, 
                                                         coordinateNames[1])
     for(i in 1:(length(coordinateNames)-1)){
       
-      # Get cells within 10% neighbourhood of variable i+1
+      # Get cells within (j -1)*10 % neighbourhood of variable i+1
       neighbours[[i+1]] <- Count_cells_within_neighbourhood(p, neighbours[[i]],
                                                             a1 = ranges[[i+1]][j] / 2, 
                                                             coordinateNames[i+1])
     }
-    
+    # Cells within (j -1)*10 % neighbourhood of all the variables
     neighbours.size[[j]] <- neighbours[[length(coordinateNames)]]
   }
   
@@ -122,12 +121,13 @@ cells_within_neighbourhood_multivariate <- function(p, # a point at the centre o
 # Check the number of cells within each neighbourhood
 sapply(neighbours.size, nrow)
 
-plot(dat2[, coordinateNames[1:2]])
-points(neighbours[[1]][, coordinateNames[1:2]], col="lightblue")
-points(neighbours[[2]][, coordinateNames[1:2]], col="green")
-points(neighbours[[4]][, coordinateNames[1:2]], col="pink")
-points(p[, coordinateNames[1:2]], col="red")
+ranges[coordinateNames[1:2]]
 
+plot(dat2[, coordinateNames[1:2]])
+points(neighbours.size[[2]][, coordinateNames[1:2]], col="lightblue")
+points(neighbours.size[[3]][, coordinateNames[1:2]], col="green")
+points(neighbours.size[[11]][, coordinateNames[1:2]], col="pink")
+points(p[, coordinateNames[1:2]], col="red")
 
 ###################################################################################################
 ### SAI
