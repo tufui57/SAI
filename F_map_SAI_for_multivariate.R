@@ -149,14 +149,14 @@ sai <- get(sai)
 summary(sai$diff)
 
 # Map SAI
-png("Y:\\diff_SAIcc_SAIcl_5km.png", width = 900, height = 630)
+png("Y:\\diff_SAIcc_SAIcl_5kmtes.png", width = 900, height = 630)
 
 
 myplot <- ggplot(sai, aes_string("x", "y", fill = "diff")) + 
   geom_raster() +
   scale_fill_gradientn(colours = colfunc(30), na.value = "transparent",
                        breaks=c(-0.1, 0, 0.1),
-                       limits=c(-0.1, 0.15)
+                       limits=c(-0.1, 0.125)
   ) +
   theme(axis.text        = element_blank(),
         axis.ticks       = element_blank(),
@@ -167,8 +167,8 @@ myplot <- ggplot(sai, aes_string("x", "y", fill = "diff")) +
 
 myhist <- ggplot(sai, aes_string(x = "diff")) +
   geom_histogram(data = sai) +
-  xlim(-0.1, 0.15) +
-  xlab(time) +
+  xlim(-0.1, 0.125) +
+  xlab("difference") +
   theme(axis.text.y = element_blank(),
         axis.text.x = element_text(angle = 270, vjust = 0.25),
         axis.title.y = element_text(angle = 270),

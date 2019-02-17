@@ -39,7 +39,7 @@ dat2 <- cbind(dat, makeTag_separate(dat$spname, genus_name, separate = "\\.")[,2
 
 ### Plot
 for(i in c("SAIcc", "SAIcl", "diff")){
-  png(paste("rangefilling_", i, genus_name, proj.name,".png", sep=""))
+  png(paste("rangefilling_", i, genus_name, proj.name,"15Feb.png", sep=""))
   plot(dat2$rangefilling, dat2[,i],
        main = i,
        xlab = "Species range filling",

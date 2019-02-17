@@ -118,20 +118,21 @@ cells_within_neighbourhood_multivariate <- function(p, # a point at the centre o
   return(neighbours.size)
 }
 
-# Check the number of cells within each neighbourhood
-sapply(neighbours.size, nrow)
-
-ranges[coordinateNames[1:2]]
-
-plot(dat2[, coordinateNames[1:2]])
-points(neighbours.size[[2]][, coordinateNames[1:2]], col="lightblue")
-points(neighbours.size[[3]][, coordinateNames[1:2]], col="green")
-points(neighbours.size[[11]][, coordinateNames[1:2]], col="pink")
-points(p[, coordinateNames[1:2]], col="red")
+# # Check the number of cells within each neighbourhood
+# sapply(neighbours.size, nrow)
+# 
+# ranges[coordinateNames[1:2]]
+# 
+# plot(dat2[, coordinateNames[1:2]])
+# points(neighbours.size[[2]][, coordinateNames[1:2]], col="lightblue")
+# points(neighbours.size[[3]][, coordinateNames[1:2]], col="green")
+# points(neighbours.size[[11]][, coordinateNames[1:2]], col="pink")
+# points(p[, coordinateNames[1:2]], col="red")
 
 ###################################################################################################
 ### SAI
 ###################################################################################################
+# SAI of the time at the time (e.g. SAI of the current climate at the current time)
 
 SAI <- function(p, # a point at the centre of search area
                 dat2, # data of points to be searched

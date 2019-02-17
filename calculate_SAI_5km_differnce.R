@@ -3,14 +3,14 @@
 #################################################################################
 
 # Load SAIcc
-load("SAI_5km_currentIncurrent_1500kmWindow_4var.data")
-saicc <- load("SAI_5km_currentIncurrent_1500kmWindow_4var.data")
+load("SAI_5km_currentIncurrent_5000kmWindow_4var.data")
+saicc <- load("SAI_5km_currentIncurrent_5000kmWindow_4var.data")
 saicc <- get(saicc)
 
 # SAIcl
 
-load("SAI_5km_currentInLGM_1500kmWindow_4var.data")
-saicl <- load("SAI_5km_currentInLGM_1500kmWindow_4var.data")
+load("SAI_5km_currentInLGM_5000kmWindow_4var.data")
+saicl <- load("SAI_5km_currentInLGM_5000kmWindow_4var.data")
 saicl <- get(saicl)
 
 ### Load coordinates of NZ at the current and the LGM
