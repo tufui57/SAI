@@ -4,7 +4,7 @@
 ############################################################################################################
 ### Load SAI with different neighbourhood sizes
 sai.c <- list()
-for(i in as.character(c(10,20,50,100,1500))){
+for(i in as.character(c(10,20,50,100,5000))){
   a <- load(paste("SAI_5km_currentInCurrent_",  i, "kmWindow_4var.data", sep = ""))
   a <- get(a)
   sai.c[[i]] <- unlist(a)
@@ -12,7 +12,7 @@ for(i in as.character(c(10,20,50,100,1500))){
 
 
 sai.lgm <- list()
-for(i in as.character(c(10,20,50,100,1500))){
+for(i in as.character(c(10,20,50,100,5000))){
   a <- load(paste("SAI_5km_LGMInLGM_",  i, "kmWindow_4var.data", sep = ""))
   a <- get(a)
   sai.lgm[[i]] <- unlist(a)

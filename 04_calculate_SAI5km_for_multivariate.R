@@ -2,7 +2,7 @@
 ### Calculate SAI
 ###################################################################################################
 
-source(".\\SAI\\F_DEBUG_SpatialAvailabilityIndex.R")
+source(".\\SAI\\F_SpatialAvailabilityIndex.R")
 
 ###################################################################################################
 ### Calculate SAI of current climate in the current climate at 5km resolution

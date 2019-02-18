@@ -183,3 +183,56 @@ grid.arrange(myplot, myhist,
 
 
 dev.off()
+
+
+
+#################################################################################
+### Draw a map of the difference of SAIcc - SAIcl
+#################################################################################
+
+### Load 5km data
+load(".\\Scores_Acaena_landcover5km.data")
+
+# # Load SAI values
+load("diff_SAI_5km_wholeNZ.data")
+sai <- load("diff_SAI_5km_wholeNZ.data")
+sai <- get(sai)
+
+# Check max/min of difference of SAI for colour scale
+summary(sai$diff_cc_ll)
+
+# Map SAI
+png("Y:\\diff_SAIcc_SAIll_5km.png", width = 900, height = 630)
+
+
+myplot <- ggplot(sai, aes_string("x", "y", fill = "diff_cc_ll")) + 
+  geom_raster() +
+  scale_fill_gradientn(colours = colfunc(30), na.value = "transparent",
+                       breaks=c(-0.5, -0.25, 0, 0.25, 0.4),
+                       limits=c(-0.5, 0.4)
+  ) +
+  theme(axis.text        = element_blank(),
+        axis.ticks       = element_blank(),
+        axis.title       = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size=20)
+  )
+
+myhist <- ggplot(sai, aes_string(x = "diff_cc_ll")) +
+  geom_histogram(data = sai) +
+  xlim(-0.5, 0.4) +
+  xlab("difference") +
+  theme(axis.text.y = element_blank(),
+        axis.text.x = element_text(angle = 270, vjust = 0.25),
+        axis.title.y = element_text(angle = 270),
+        axis.ticks.y = element_blank()
+  ) +
+  theme(panel.background = element_rect(fill = 'gray96'))
+
+
+# Plot in multiple panels
+grid.arrange(myplot, myhist,
+             ncol = 2, nrow = 1, widths = c(2, 1))
+
+
+dev.off()

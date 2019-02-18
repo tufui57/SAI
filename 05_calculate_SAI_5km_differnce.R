@@ -32,8 +32,20 @@ colnames(sai.cl)[3] <- "SAIcl"
 # Merge the two SAIs
 sai.diff <- merge(sai.cc, sai.cl, by=c("x","y"))
 
-### Calculate the SAI difference
-
+### Calculate the difference SAIcc - SAIcl 
 sai.diff$diff <- (sai.diff$SAIcc - sai.diff$SAIcl)
 
-save(sai.diff, file="diff_SAIcc_cl_5km_wholeNZ.data")
+### Calculate the difference SAIcc - SAIll
+load("SAI_5km_LGMInLGM_5000kmWindow_4var.data")
+saill <- load("SAI_5km_LGMInLGM_5000kmWindow_4var.data")
+saill <- get(saill)
+
+sai.ll <- cbind(scores.lgm[, c("x", "y")], unlist(saill))
+colnames(sai.ll)[3] <- "SAIll"
+
+# Merge the two SAIs
+sai.diff <- merge(sai.diff, sai.ll, by=c("x","y"))
+
+sai.diff$diff_cc_ll <- (sai.diff$SAIcc - sai.diff$SAIll)
+
+save(sai.diff, file="diff_SAI_5km_wholeNZ.data")

@@ -3,7 +3,7 @@
 ######################################################################################
 
 # Load functions
-source(".//SAI//F_DEBUG_SpatialAvailabilityIndex.R")
+source(".//SAI//F_SpatialAvailabilityIndex.R")
 
 ######################################################################################
 ### Data import

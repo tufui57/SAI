@@ -2,7 +2,7 @@
 ### Calculate SAI
 ###################################################################################################
 
-source(".\\SAI\\F_modified_SpatialAvailabilityIndex.R")
+source(".\\SAI\\F_SpatialAvailabilityIndex.R")
 
 ### Load 1km data
 scores <- read.csv("D:\\PhD\\current_south_island_climate1km.csv")
