@@ -160,4 +160,58 @@ SAI <- function(p, # a point at the centre of search area
   return(res)
 }
 
+###################################################################################################
+### Calculate variable ranges without X % outliers
+###################################################################################################
+
+ranges_without_outliers <- function(dat, 
+                                    coordinateName, 
+                                    outlierPercent){
+  
+  # Omit data < 1% and > 99 % quantiles
+  qua <- quantile(dat[,coordinateName], c(outlierPercent * 0.01, 1 - outlierPercent * 0.01))
+  out.min <- dat[,coordinateName] <= qua[1]
+  out.max <- dat[,coordinateName] >= qua[2]
+  
+  # Create radius
+  dat.omit <- dat[out.min + out.max == 0,]
+  
+  # How many % of variable range decreased?
+  dec <- round(
+    ((max(dat[,coordinateName])- min(dat[,coordinateName]))- ((max(dat.omit[,coordinateName])- min(dat.omit[,coordinateName]))))/((max(dat[,coordinateName])- min(dat[,coordinateName]))),
+    2
+  )
+  
+  print(dec)
+  
+  res <- get_radius_size(dat.omit, coordinateName)
+  return(res)
+}
+
+
+check_outliers <- function(p, dat, 
+                           coordinateName, 
+                           outlierPercent){
+  
+  # Omit data < 1% and > 99 % quantiles
+  qua <- quantile(dat[,coordinateName], c(outlierPercent * 0.01, 1 - outlierPercent * 0.01))
+  out.min <- dat[,coordinateName] <= qua[1]
+  out.max <- dat[,coordinateName] >= qua[2]
+  
+  ### Replace outliers with min or max values of the variables
+  # If the value is smaller than min
+  if(dat[out.min, coordinateName] == p[, coordinateName]){
+    print(paste(coordinateName, "< min"))
+    p[, coordinateName] <- qua[1]
+  }
+  # If the value is bigger than max
+  if(dat[out.max, coordinateName] == p[, coordinateName]){
+    print(paste(coordinateName, "> max"))
+    p[, coordinateName] <- qua[2]
+  }
+  
+  return(p[,coordinateName])
+}
+
+
 

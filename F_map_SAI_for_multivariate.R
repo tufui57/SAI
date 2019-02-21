@@ -37,7 +37,7 @@ hist_SAI <- function(scores, sai, time){
   colnames(sai.dat)[3] <- time
   
   myhist <- ggplot(sai.dat, aes_string(x = time)) +
-  geom_histogram(data = sai.dat) +
+  geom_histogram(data = sai.dat, bins = 100) +
   xlim(0,1) +
   xlab(time) +
   theme(axis.text.y = element_blank(),
@@ -166,7 +166,7 @@ myplot <- ggplot(sai, aes_string("x", "y", fill = "diff")) +
   )
 
 myhist <- ggplot(sai, aes_string(x = "diff")) +
-  geom_histogram(data = sai) +
+  geom_histogram(data = sai, bins = 100) +
   xlim(-0.1, 0.125) +
   xlab("difference") +
   theme(axis.text.y = element_blank(),
@@ -219,7 +219,7 @@ myplot <- ggplot(sai, aes_string("x", "y", fill = "diff_cc_ll")) +
   )
 
 myhist <- ggplot(sai, aes_string(x = "diff_cc_ll")) +
-  geom_histogram(data = sai) +
+  geom_histogram(data = sai, bins = 100) +
   xlim(-0.5, 0.4) +
   xlab("difference") +
   theme(axis.text.y = element_blank(),
