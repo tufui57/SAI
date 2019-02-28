@@ -48,6 +48,29 @@ res <- do.call("grid.arrange", c(his, ncol=1))
 ggsave("1%omit_bioclim.png", plot=res)
 
 ###################################################################################################
+### Histograms comparing the current and LGM climate
+###################################################################################################
+
+load(".\\Scores_Acaena_landcover5km.data")
+load(".\\Scores_LGM_mainisland_worldclim1_5km.data")
+
+coordinateNames <- c("bioclim1", "bioclim6", "bioclim12", "bioclim15")
+
+his<-list()
+for(i in coordinateNames){
+  print(i)
+  
+  # Plot histograms
+  his[[i]] <- ggplot(scores, aes_string(i))+ 
+    geom_histogram(fill="red") +
+    geom_histogram(data = scores.lgm, aes_string(gsub("bioclim","bi", i)), fill="blue", alpha = 0.5, position = 'identity') +
+    xlab(i)
+}
+
+res <- do.call("grid.arrange", c(his, nrow=1))
+ggsave("bioclim_current_lgm.png", plot=res)
+
+###################################################################################################
 ### NULL distribution of SAIcc - difference of occurrence probabilities
 ###################################################################################################
 
@@ -99,3 +122,36 @@ for(i in 1:length(cur)){
   }
 )
 }
+
+###################################################################################################
+### Comparison of outlier removal and normal vs half range setting
+###################################################################################################
+
+### Load SAI values
+load("SAI_5km_currentInCurrent_5000kmWindow_4var_twicerange.data")
+nam <- load("SAI_5km_currentInCurrent_5000kmWindow_4var_twicerange.data")
+sai.tw <- get(nam)
+
+### Load SAI values
+load("SAI_5km_currentInCurrent_5000kmWindow_4var_spline.data")
+nam <- load("SAI_5km_currentInCurrent_5000kmWindow_4var_spline.data")
+sai <- get(nam)
+
+png("SAIcc_normal_vs_half_range.png")
+plot(unlist(sai), unlist(sai.tw),
+     xlab = "SAIcc with half range", ylab = "SAIcc with normal range",
+     ylim = c(0,0.8), xlim = c(0,0.8))
+dev.off()
+
+
+### Load SAI values
+load("SAI_5km_currentInCurrent_5000kmWindow_4var_outlier_twicerange.data")
+nam <- load("SAI_5km_currentInCurrent_5000kmWindow_4var_outlier_twicerange.data")
+sai.out <- get(nam)
+
+png("SAIcc_normal_vs_outlierRemoved.png")
+plot(unlist(sai.out), unlist(sai.tw),
+     xlab = "SAIcc without outliers", ylab = "SAIcc with outliers",
+     ylim = c(0,0.8), xlim = c(0,0.8))
+dev.off()
+

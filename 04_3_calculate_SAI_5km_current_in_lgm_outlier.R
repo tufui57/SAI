@@ -1,5 +1,5 @@
 ######################################################################################
-### Calculate spatial availability index on 2 dimentional ordination space 
+### Calculate spatial availability of the current climate at the LGM (SAIcl) without outlier
 ######################################################################################
 
 # Load functions

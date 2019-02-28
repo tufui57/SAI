@@ -24,10 +24,9 @@ coordinateNames <- c("bioclim1", "bioclim6", "bioclim12", "bioclim15")
 colnames(scores.lgm) <- gsub("bi", "bioclim", colnames(scores.lgm))
 
 # Range of variables in searched data
-ranges <- lapply(coordinateNames, get_radius_size, dat = scores.lgm)
-names(ranges) <- coordinateNames
-
-
+scores.int <- rbind(scores[c("x", "y", coordinateNames)], scores.lgm[c("x", "y", coordinateNames)])
+ranges.int <- lapply(coordinateNames, get_radius_size, dat = scores.int)
+names(ranges.int) <- coordinateNames
 
 SAIcl_for_area <- function(neighbour.window.size, # Size of windows to calculate the SAI (km)
                          whole
@@ -60,7 +59,8 @@ SAIcl_for_area <- function(neighbour.window.size, # Size of windows to calculate
     ### SAI calculation
     sai[i] <- SAI(p, # a point at the centre of search area.
                   neighbour.window, # data of points to be searched. 
-                  ranges, # result of get_radius_size()
+                  ranges.int, # result of get_radius_size()
+                  twicerange = TRUE,
                   coordinateNames # column names for climate variables in p and neighbour.window
     )
   }
@@ -77,7 +77,7 @@ for(i in c(20)){
   ### i km neighbourhood window
   sai.i<- SAIcl_for_area(i, whole=F)
   # Save
-  save(sai.i, file = paste("SAI_5km_currentInLGM_", i,"kmWindow_4var_test.data", sep=""))
+  save(sai.i, file = paste("SAI_5km_currentInLGM_", i,"kmWindow_4var.data", sep=""))
   
 }
 

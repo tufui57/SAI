@@ -91,6 +91,7 @@ auc <-
 cells_within_neighbourhood_multivariate <- function(p, # a point at the centre of search area
                                              dat2, # data of points to be searched
                                              ranges, # result of get_radius_size()
+                                             twicerange = TRUE, # Logical. TRUE; 100% range covers all cells from any cells. FALSE; some cells might not be covered by 100% range.
                                              coordinateNames # column name for climate variable in p and dat2
 ){
 
@@ -102,13 +103,13 @@ cells_within_neighbourhood_multivariate <- function(p, # a point at the centre o
     
     # Get cells within (j -1)*10 % neighbourhood of variable 1
     neighbours[[1]] <- Count_cells_within_neighbourhood(p, dat2,
-                                                        a1 = ranges[[1]][j] / 2, 
+                                                        a1 = ifelse(twicerange, ranges[[1]][j], ranges[[1]][j] / 2), 
                                                         coordinateNames[1])
     for(i in 1:(length(coordinateNames)-1)){
       
       # Get cells within (j -1)*10 % neighbourhood of variable i+1
       neighbours[[i+1]] <- Count_cells_within_neighbourhood(p, neighbours[[i]],
-                                                            a1 = ranges[[i+1]][j] / 2, 
+                                                            a1 =  ifelse(twicerange,  ranges[[i+1]][j], ranges[[i+1]][j] / 2), 
                                                             coordinateNames[i+1])
     }
     # Cells within (j -1)*10 % neighbourhood of all the variables
@@ -137,12 +138,14 @@ cells_within_neighbourhood_multivariate <- function(p, # a point at the centre o
 SAI <- function(p, # a point at the centre of search area
                 dat2, # data of points to be searched
                 ranges, # result of get_radius_size()
+                twicerange,
                 coordinateNames # column name for climate variable in p and dat2
 ){
   
   neighbours.size <- cells_within_neighbourhood_multivariate(p, # a point at the centre of search area
                                           dat2, # data of points to be searched
                                           ranges, # result of get_radius_size()
+                                          twicerange,
                                           coordinateNames # column name for climate variable in p and dat2
   )
   
@@ -155,7 +158,7 @@ SAI <- function(p, # a point at the centre of search area
   )
   
   ### Calculate AUC (area under curve) for each current grid cells
-  res <- auc(c(0, 1:10)*0.1, c(0, ratio))
+  res <- auc(c(0, 1:10)*0.1, c(0, ratio), type="spline")
   
   return(res)
 }
@@ -188,6 +191,9 @@ ranges_without_outliers <- function(dat,
   return(res)
 }
 
+###################################################################################################
+### Function to replace outlier values with min or max values of the variables
+###################################################################################################
 
 check_outliers <- function(p, dat, 
                            coordinateName, 
@@ -200,12 +206,12 @@ check_outliers <- function(p, dat,
   
   ### Replace outliers with min or max values of the variables
   # If the value is smaller than min
-  if(dat[out.min, coordinateName] == p[, coordinateName]){
+  if(sum(p[, coordinateName] == dat[out.min, coordinateName]) > 0){
     print(paste(coordinateName, "< min"))
     p[, coordinateName] <- qua[1]
   }
   # If the value is bigger than max
-  if(dat[out.max, coordinateName] == p[, coordinateName]){
+  if(sum(p[, coordinateName] == dat[out.max, coordinateName]) > 0){
     print(paste(coordinateName, "> max"))
     p[, coordinateName] <- qua[2]
   }

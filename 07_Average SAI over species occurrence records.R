@@ -3,7 +3,7 @@
 ### Average SAI over species occurrence records
 #################################################################################
 library(dplyr)
-source(".//SAI//calculate_SAI_5km_differnce.R")
+source(".//SAI//05_calculate_SAI_5km_differnce.R")
 source(".//functions//F_speciseNameCleaning_spnameFromPhylogenyTree.r")
 
 # Data of current NZ on 5km resolution
@@ -39,7 +39,7 @@ dat2 <- cbind(dat, makeTag_separate(dat$spname, genus_name, separate = "\\.")[,2
 
 ### Plot
 for(i in c("SAIcc", "SAIcl", "diff")){
-  png(paste("rangefilling_", i, genus_name, proj.name,"15Feb.png", sep=""))
+  png(paste("rangefilling_", i, genus_name, proj.name,"26Feb.png", sep=""))
   plot(dat2$rangefilling, dat2[,i],
        main = i,
        xlab = "Species range filling",

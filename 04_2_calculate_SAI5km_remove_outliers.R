@@ -27,7 +27,7 @@ SAI_outliers <- function(time, # "current" or "LGM"
   
   # Set ranges of each variable
   ranges <- lapply(coordinateNames, function(i){
-    ranges_without_outliers(coordinateName = i, outlierPercent = 1, dat = scores)
+    ranges_without_outliers(coordinateName = i, outlierPercent, dat = scores)
   }
   )
   names(ranges) <- coordinateNames
@@ -67,6 +67,7 @@ SAI_outliers <- function(time, # "current" or "LGM"
     sai[i] <- SAI(p.cor, # a point at the centre of search area
                   neighbour.window, # data of points to be searched
                   ranges, # result of get_radius_size()
+                  twicerange=TRUE,
                   coordinateNames # column name for climate variable
     )
   }
@@ -76,31 +77,21 @@ SAI_outliers <- function(time, # "current" or "LGM"
 
 ###### Current
 
-for(i in c(20,50,100)){
-  ### i km neighbourhood window
-  sai.i <- SAI_outliers("current", i, outlierPercent = 1, whole=F)
-  # Save
-  save(sai.i, file = paste("SAI_5km_currentInCurrent_", i,"kmWindow_4var_outlier.data", sep=""))
-  
-}
-
-# Whole NZ
-sai.i <- SAI_outliers("current", 5000, outlierPercent = 1, whole=T)
+for(i in c(1, 2.5, 5)){
+  # Whole NZ
+sai.i <- SAI_outliers("current", 5000, outlierPercent = i, whole=T)
 # Save
-save(sai.i, file = "SAI_5km_currentInCurrent_5000kmWindow_4var.data")
+save(sai.i, file = paste("SAI_5km_currentInCurrent_5000kmWindow_4var_outlier", i, ".data", sep=""))
+
+}
 
 ###### LGM
 
-for(i in c(20,50,100)){
-  ### i km neighbourhood window
-  sai.i<- SAI_outliers("LGM", i, outlierPercent = 1, whole=F)
+for(i in c(1, 2.5, 5)){
+  # Whole NZ
+  sai.i <- SAI_outliers("LGM", 5000, outlierPercent = i, whole=T)
   # Save
-  save(sai.i, file = paste("SAI_5km_LGMInLGM_", i,"kmWindow_4var.data", sep=""))
+  save(sai.i, file = paste("SAI_5km_LGMinLGM_5000kmWindow_4var_outlier", i, ".data", sep=""))
   
 }
-
-# Whole NZ
-sai.i<- SAI_outliers("LGM", 5000, outlierPercent = 1, whole=T)
-# Save
-save(sai.i, file = "SAI_5km_LGMInLGM_5000kmWindow_4var.data")
 

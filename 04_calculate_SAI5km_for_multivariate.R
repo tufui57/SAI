@@ -64,6 +64,7 @@ SAI_for_area <- function(time, # "current" or "LGM"
     sai[i] <- SAI(p, # a point at the centre of search area
                   neighbour.window, # data of points to be searched
                   ranges, # result of get_radius_size()
+                  twicerange = TRUE,
                   coordinateNames # column name for climate variable
     )
   }
@@ -84,7 +85,7 @@ for(i in c(20,50,100)){
 # Whole NZ
 sai.i<- SAI_for_area("current", 5000, standardize = FALSE, whole=T)
 # Save
-save(sai.i, file = paste("SAI_5km_currentInCurrent_", i,"kmWindow_4var.data", sep=""))
+save(sai.i, file = "SAI_5km_currentInCurrent_5000kmWindow_4var.data")
 
 ###### LGM
 

@@ -18,19 +18,22 @@ for(i in coordinateNames){
 
 
 ### How different standardized SAI and non standardized SAI.
-load("SAI_5km_currentInCurrent_20kmWindow_4var_standardized.data")
-nam <- load("SAI_5km_currentInCurrent_20kmWindow_4var_standardized.data")
+nam <- load("SAI_5km_currentInCurrent_5000kmWindow_4var_standardized.data")
 sai.st <- get(nam)
 
-load("SAI_5km_currentInCurrent_1500kmWindow_4var.data")
+load("SAI_5km_currentInCurrent_5000kmWindow_4var.data")
 
-sum(unlist(sai.i) == unlist(sai.st))
+sum(unlist(sai.i) != unlist(sai.st))
 
+png("standardized_SAI.png")
+plot(unlist(sai.i), unlist(sai.st),
+     xlab="Non standardized SAI", ylab="Standardized SAI")
+dev.off()
 ### They are 99.9% same!
 
 ### Double check
 
-source(".\\SAI\\F_DEBUG_SpatialAvailabilityIndex.R")
+source(".\\SAI\\F_SpatialAvailabilityIndex.R")
 
 SAI_for_area <- function(time, # "current" or "LGM"
                          neighbour.window.size, # Size of windows to calculate the SAI (km)
