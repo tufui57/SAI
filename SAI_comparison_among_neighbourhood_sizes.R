@@ -49,19 +49,3 @@ boxplot(sai.lgm2,
 dev.off()
 
 
-# The following figure looks wrong but I have no script how I obtained this data
-# ############################################################################################################
-# ## Visualize SAI diferences due to neighbourhood size
-# ############################################################################################################
-# 
-# ### Load SAI with different neighbourhood sizes
-# sai <- read.csv("SAI_current_LGM_dif.csv")
-# 
-# png("SAI_boxplot.png")
-# par(las = 2,
-#     mar = c(5.1 +2.2, 4.1, 4.1-2.2, 2.1)
-# )
-# boxplot(sai[, c(-1,-2,-3, -ncol(sai))],
-#         main = "SAI with 20, 50 and 100 km neighbourhood",
-#         ylab = "SAI")
-# dev.off()

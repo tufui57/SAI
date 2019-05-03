@@ -5,10 +5,10 @@ library(dismo)
 
 # Load SAI values
 load("SAI_south_1km_current_4var.data")
-ref5 <- raster(paste("D:\\PhD\\GIS map and Climate data\\current_landcover1km.bil", sep=""))
+ref5 <- raster(paste("Y:\\GIS map and Climate data\\current_landcover1km.bil", sep=""))
 
 ### Load 1km data
-scores <- read.csv("D:\\PhD\\current_south_island_climate1km.csv")
+scores <- read.csv("Y:\\current_south_island_climate1km.csv")
 sai.dat <- cbind(scores[, c("x", "y")], unlist(sai))
 colnames(sai.dat)[3] <- "AUC"
 
@@ -20,7 +20,7 @@ coordinateNames <- c("bioclim10", "bioclim11", "bioclim18", "bioclim19")
 
 
 # NZ Geographycal location raster
-ref <- raster(paste("D:\\PhD\\GIS map and Climate data\\current_landcover1km.bil", sep=""))
+ref <- raster(paste("Y:\\GIS map and Climate data\\current_landcover1km.bil", sep=""))
 
 r1 <- convert_dataframe_to_raster(ref = ref, dat = scores,
                             coordinateCols = c("x", "y"),
@@ -58,7 +58,7 @@ sai.dat$mess <- mess_SI
 ### Mahalanobis distance; a measure of the distance between each observation in a multidimensional cloud of points and the centroid of the cloud. 
 
 ### Load 1km data
-scores <- read.csv("D:\\PhD\\current_south_island_climate1km.csv")
+scores <- read.csv("Y:\\current_south_island_climate1km.csv")
 coordinateNames <- c("bioclim10", "bioclim11", "bioclim18", "bioclim19")
 
 mat <- as.matrix(scores[, coordinateNames])
@@ -84,10 +84,10 @@ plot(maha.raster)
 library(raster)
 
 ### Load elevation data
-ele <- raster("D://PhD//GIS map and Climate data//kx-nz-80m-digital-elevation-model-GTiff//nztm.tif")
+ele <- raster("Y://GIS map and Climate data//kx-nz-80m-digital-elevation-model-GTiff//nztm.tif")
 
 ### Load 1km data
-scores <- read.csv("D:\\PhD\\current_south_island_climate1km.csv")
+scores <- read.csv("Y:\\current_south_island_climate1km.csv")
 coordinateNames <- c("bioclim10", "bioclim11", "bioclim18", "bioclim19")
 
 # Extract elevation by locations of centre of 1km grid cells
