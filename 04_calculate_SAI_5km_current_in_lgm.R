@@ -23,10 +23,6 @@ coordinateNames <- c("bioclim1", "bioclim6", "bioclim12", "bioclim15")
 # Colnames for target variables of current and LGM scores must be shared.
 colnames(scores.lgm) <- gsub("bi", "bioclim", colnames(scores.lgm))
 
-# Range of variables in searched data
-scores.int <- rbind(scores[c("x", "y", coordinateNames)], scores.lgm[c("x", "y", coordinateNames)])
-ranges.int <- lapply(coordinateNames, get_radius_size, dat = scores.int)
-names(ranges.int) <- coordinateNames
 
 SAIcl_for_area <- function(neighbour.window.size, # Size of windows to calculate the SAI (km)
                          whole
@@ -44,11 +40,19 @@ SAIcl_for_area <- function(neighbour.window.size, # Size of windows to calculate
       ######################################################################################
       # Prepare a x a km2 neighbourhood window as an area to be searched
       ######################################################################################
-      # For the first step, try a = 20
-      # Unit of NZTM is meter, so 10000 m = 10km = 20km/2
+      # Get LGM cells within the neighbourhood
       a <- neighbour.window.size * 1000 / 2
       dat.x <- Count_cells_within_neighbourhood(p, scores.lgm, a, "x")
       neighbour.window <- Count_cells_within_neighbourhood(p, dat.x, a, "y")
+      
+      # Get current cells within the neighbourhood
+      dat.x <- Count_cells_within_neighbourhood(p, scores, a, "x")
+      neighbour.window.current <- Count_cells_within_neighbourhood(p, dat.x, a, "y")
+      
+      # Set climate ranges for the neighbourhood
+      scores.int <- rbind(neighbour.window[c("x", "y", coordinateNames)], neighbour.window.current[c("x", "y", coordinateNames)])
+      ranges.int <- lapply(coordinateNames, get_radius_size, dat = scores.int)
+      names(ranges.int) <- coordinateNames
       
     }else{
       # Whole NZ is the neghbourhood
@@ -69,17 +73,9 @@ SAIcl_for_area <- function(neighbour.window.size, # Size of windows to calculate
 
 }
 
-
+SAIcl_for_area(20, whole = F)
 
 ###### SAI of current in the LGM
-
-for(i in c(20)){
-  ### i km neighbourhood window
-  sai.i<- SAIcl_for_area(i, whole=F)
-  # Save
-  save(sai.i, file = paste("SAI_5km_currentInLGM_", i,"kmWindow_4var.data", sep=""))
-  
-}
 
 # Whole NZ
 sai.i <- SAIcl_for_area(5000,  whole=T)

@@ -1,23 +1,24 @@
 ###################################################################################
-#############   Prepare past climate data   #######################################
+#############   Clip South Island polygon 
 ###################################################################################
 
 source(".//functions//F_clip_raster_by_polygon.R")
+source(".//functions//F02_create_raster_from_dataframe.R")
 library(dplyr)
 library(raster)
 
-#####################################
-# 1. Crop & project past rasters
-#####################################
+######################################################
+# 1. Import polygons of current whole NZ
+######################################################
 
 # Import current outline of NZ
-path = "D:\\PhD\\GIS map and Climate data\\lds-nz-coastlines-and-islands-polygons-topo-150k-SHP\\nz-coastlines-and-islands-polygons-topo-150k.shp"
+path = "Y:\\GIS map and Climate data\\lds-nz-coastlines-and-islands-polygons-topo-150k-SHP\\nz-coastlines-and-islands-polygons-topo-150k.shp"
 LAYERS <- ogrListLayers(path)
 nzland <- readOGR(path, LAYERS)
 
 
 ##########################################################
-# 3. Extract past climate rasters by past polygons
+# 3. Extract past climate rasters by polygons
 ##########################################################
 
 ### Calculate area of each polygon to find the largest island of LGM
@@ -39,7 +40,7 @@ writeOGR(sland, dsn = ".", layer = 'SouthIsland', driver = "ESRI Shapefile")
 ### Load 1km cliamte data
 load(".\\Scores_landcover1km.data")
 # load reference raster
-ref5 <- raster(paste("D:\\PhD\\GIS map and Climate data\\current_landcover1km.bil", sep=""))
+ref5 <- raster(paste("Y:\\GIS map and Climate data\\current_landcover1km.bil", sep=""))
 
 # Add cell ID
 scores$id <- 1:nrow(scores)
@@ -49,8 +50,10 @@ ras1km <- convert_dataframe_to_raster(ref = ref5, dat = scores,
                             coordinateCols = c("x", "y"),
                             cellvalueCol = "id")
 
-
+##########################################################
 # Clip raster by polygon of South Island
+##########################################################
+
 southisland <- clip.by.polygon(ras1km, shape = nzland[max.area,])
 
 # Save the clipped rasters
@@ -64,5 +67,5 @@ dat.south2 <- dat.south[!is.na(dat.south[,3]), ] %>%
   merge(scores[, -which(colnames(scores) == "x" | colnames(scores) == "y")], ., by = "id")
 
 # Save South Island data
-write.csv(dat.south2, file = "D:\\PhD\\current_south_island_climate1km.csv")
+write.csv(dat.south2, file = "Y:\\current_south_island_climate1km.csv")
 
