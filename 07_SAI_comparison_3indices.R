@@ -1,13 +1,12 @@
 ### Comparison of indices
 
 # Correlation matrix
-
-library("PerformanceAnalytics")
+setwd("Y://5th chapter SAI chapter//meta data")
 
 # Load spatial similarity indices
 sai <- load("SAI_5km_currentInCurrent_5000kmWindow_4var.data")
 sai <- get(sai)
-load("Scores_Acaena_landcover5km.data")
+load("Y://5th chapter SAI chapter//raw data//Scores_Acaena_landcover5km.data")
 scores.sai <- cbind(scores, unlist(sai))
 colnames(scores.sai)[length(scores.sai)] <- "SAI"
 
@@ -24,9 +23,35 @@ dat2 <- merge(dat, scores.sai, by=c("x","y"))
 dat3 <- merge(dat2, euc, by=c("x","y"))
 
 # Plot
-png("SAI_comparison.png")
-chart.Correlation(dat3[,c("SAI","Euclidean","Mahalanobis", "MESS")], 
-                  histogram=TRUE, pch=19)
+panel.hist <- function(x, ...)
+{
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(usr[1:2], 0, 1.5) )
+  h <- hist(x, plot = FALSE)
+  breaks <- h$breaks; nB <- length(breaks)
+  y <- h$counts; y <- y/max(y)
+  rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
+}
+
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+panel.sca <- function(x, y, ...) {
+  points(x, y, pch = 19, col = rgb(red = 0, green = 0, blue = 0, alpha = 0.25),
+         cex=0.05)
+}
+
+png("Y://SAI_comparison_4variables.png")
+pairs(dat3[,c("SAI","Euclidean","MESS", "Mahalanobis")],
+      diag.panel=panel.hist, upper.panel = panel.cor,lower.panel = panel.sca
+      )
 dev.off()
 
 ###########################################################################
@@ -36,6 +61,15 @@ dev.off()
 plot(dat3$Euclidean, dat3$SAI)
 sai.range <- dat3$SAI < 0.55
 euc.range <- dat3$Euclidean > -2000
+
+sum(is.na(dat3[sai.range & euc.range, c("bioclim1","bioclim6","bioclim12", "bioclim15")]))
+
+lapply(c("bioclim1","bioclim6","bioclim12", "bioclim15"), 
+       function(x){
+         hist(dat3[, x], main = x)
+         hist(dat3[sai.range & euc.range, x], col ="red", add=T)
+       }
+       )
 
 library(rgdal)
 

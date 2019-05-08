@@ -84,7 +84,7 @@ for(i in c(20,50,100)){
 }
 
 # Whole NZ
-sai.i<- SAI_for_area("current", 5000, standardize = FALSE, whole=T)
+sai.i<- SAI_for_limited_ranges("current", 5000, standardize = FALSE, whole=T)
 # Save
 save(sai.i, file = "SAI_5km_currentInCurrent_5000kmWindow_4var.data")
 
@@ -92,14 +92,14 @@ save(sai.i, file = "SAI_5km_currentInCurrent_5000kmWindow_4var.data")
 
 for(i in c(20,50,100)){
   ### i km neighbourhood window
-  sai.i<- SAI_for_area("LGM", i, standardize = FALSE, whole=F)
+  sai.i<- SAI_for_limited_ranges("LGM", i, standardize = FALSE, whole=F)
   # Save
   save(sai.i, file = paste("SAI_5km_LGMInLGM_", i,"kmWindow_4var.data", sep=""))
   
 }
 
 # Whole NZ
-sai.i<- SAI_for_area("LGM", 5000, standardize = FALSE, whole=T)
+sai.i<- SAI_for_limited_ranges("LGM", 5000, standardize = FALSE, whole=T)
 # Save
 save(sai.i, file = "SAI_5km_LGMInLGM_5000kmWindow_4var.data")
 
@@ -109,7 +109,7 @@ save(sai.i, file = "SAI_5km_LGMInLGM_5000kmWindow_4var.data")
 ### Standardized SAI
 for(i in c(20,500)){
   ### 1500 km neighbourhood window = whole NZ
-  sai.i <- SAI_for_area("current", i, standardize = TRUE, whole=F)
+  sai.i <- SAI_for_limited_ranges("current", i, standardize = TRUE, whole=F)
   # Save
   save(sai.i, file = paste("SAI_5km_currentInCurrent_",i,"kmWindow_4var_standardized.data", sep=""))
 }
