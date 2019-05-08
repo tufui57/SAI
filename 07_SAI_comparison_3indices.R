@@ -18,9 +18,9 @@ euc <- read.csv("Euclidean_similarity5km.csv")
 colnames(euc)[length(euc)] <- "Euclidean"
 
 # Merge all indices
-dat <- merge(mess, maha, by=c("x","y"))
-dat2 <- merge(dat, scores.sai, by=c("x","y"))
-dat3 <- merge(dat2, euc, by=c("x","y"))
+dat <- merge(mess[,c("x", "y", "MESS")], maha[,c("x", "y", "Mahalanobis")], by=c("x","y"))
+dat2 <- merge(dat[,c("x", "y", "MESS", "Mahalanobis")], euc[,c("x", "y", "Euclidean")], by=c("x","y"))
+dat3 <- merge(dat2[,c("x", "y", "MESS", "Mahalanobis","Euclidean")], scores.sai, by=c("x","y"))
 
 # Plot
 panel.hist <- function(x, ...)

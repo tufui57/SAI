@@ -23,18 +23,17 @@ euc <- read.csv("Euclidean_similarity5km.csv")
 colnames(euc)[length(euc)] <- "Euclidean"
 
 # Merge all indices
-dat <- merge(mess, maha, by=c("x","y"))
-dat2 <- merge(dat, scores.sai, by=c("x","y"))
-dat3 <- merge(dat2, euc, by=c("x","y"))
+dat <- merge(mess[,c("x", "y", "MESS")], maha[,c("x", "y", "Mahalanobis")], by=c("x","y"))
+dat2 <- merge(dat[,c("x", "y", "MESS", "Mahalanobis")], euc[,c("x", "y", "Euclidean")], by=c("x","y"))
 
 #################################################################################
 ### Function to daw a map of spatial availability index 
 #################################################################################
 
 ### Function to Draw the SAI map
-plot_similarityIndex <- function(scores, index, colfunc){
+plot_similarityIndex <- function(data, index, colfunc){
   # Combine index to coordinate data
-  index.dat <- cbind(scores[, c("x", "y")], dat3[,index])
+  index.dat <- data[,c("x", "y", index)]
   colnames(index.dat)[3] <- index
   
   # Set colour scale 
@@ -65,10 +64,10 @@ plot_similarityIndex <- function(scores, index, colfunc){
 }
 
 #### Function to draw Histgram of the index values
-hist_similarityIndex <- function(scores, index){
+hist_similarityIndex <- function(data, index){
   
   # Combine index to coordinate data
-  index.dat <- cbind(scores[, c("x", "y")], dat3[,index])
+  index.dat <- data[,c("x", "y", index)]
   colnames(index.dat)[3] <- index
   
   myhist <- ggplot(index.dat, aes_string(x = index)) +
@@ -99,16 +98,14 @@ myhist <- list()
 
 for(i in c("Euclidean","MESS", "Mahalanobis")){
   
-  myplot[[i]] <- plot_similarityIndex(scores, i, colfunc) + theme(legend.position = "none") +
+  myplot[[i]] <- plot_similarityIndex(dat2, i, colfunc) + 
+    theme(legend.position = "none") +
     # Leave space on left to add legend manually later
     theme(plot.margin=unit(c(1,3,1,1),"cm"))
   
-  myhist[[i]] <- hist_similarityIndex(scores, i)
+  myhist[[i]] <- hist_similarityIndex(dat2, i)
   
 }
-### Get empty plot
-empty.plot <- ggplot(scores, aes(x = bioclim1, y = bioclim2)) + geom_blank() + 
-  theme_void()
 
 png("Y:\\SimilarityIndices_5km_neighbourhood.png", width = 1200, height = 550)
 
