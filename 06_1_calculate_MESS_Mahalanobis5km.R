@@ -36,10 +36,10 @@ names(s) <- coordinateNames
 refpt <- scores[, coordinateNames]
 
 # Calculate MESS
-ms <- mess(s, refpt, full=TRUE)
+ms <- mess(s, refpt)
 plot(ms)
 
-ms2 <- data.frame(coordinates(ms[[5]]), values(ms[[5]]))
+ms2 <- data.frame(coordinates(ms), values(ms))
 
 # Save MESS
 write.csv(ms2, "MESS5km.csv")

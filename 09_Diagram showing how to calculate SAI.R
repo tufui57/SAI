@@ -16,7 +16,7 @@ load(".\\Scores_Acaena_landcover5km.data")
 coordinateNames <- c("bioclim1", "bioclim6", "bioclim12", "bioclim15")
 
 ### Select the target point to draw figures
-n = 10000 
+n = 3000 
 p <- scores[n, ]
 
 # Get climate ranges of cells within the neighbourhood window 
@@ -48,12 +48,13 @@ res <- auc(c(0, 1:10)*0.1, c(0, ratio), type = "spline")
 
 png("AUC.png")
 
+par(cex=1.5)
 plot(seq(0,100,10), c(0, unlist(ratio))*100,
-     xlab = "Proportion of climate ranges (%)",
-     ylab = "Proportion of analogous climates (%)"
+     xlab = "Climate range breadths (%)",
+     ylab = "Proportion of analogous climate cells (%)"
 )
 lines(seq(0,100,10), c(0, unlist(ratio))*100)
-text(80,20, paste("Area Under Curve =", round(res,2)))
+text(65,20, paste("Area Under Curve =", round(res,2)))
 
 dev.off()
 ###################################################################################################
@@ -127,10 +128,20 @@ p <- scores.neigh[n, ]
 #### Set colour gradient
 colfunc <- colorRampPalette(c("red", "yellow"))
 
+brks <- seq(0, 100, 10)
+
 png("example_map.png")
-plot(prast, col = colfunc(10))
-points(p[, c("x","y")], pch=15)
+plot(prast, col = colfunc(10), legend=FALSE, breaks = brks)
+points(p[, c("x","y")], pch = 8, cex = 1.5)
+plot(prast, legend.only=TRUE, col=colfunc(10),
+     legend.width=1, legend.shrink=0.75,
+     breaks = brks,
+     axis.args=list(at=seq(0, 100, 20),
+                    labels=seq(0, 100, 20), 
+                    cex.axis=1.25),
+     legend.args=list(text='Climate range breadths (%)', side=4, font=2, line=2.5, cex=1.5))
 dev.off()
+
 ###################################################################################################
 ### Plot the point on climate space
 ###################################################################################################
@@ -139,10 +150,13 @@ scores.neigh$bioclim1 <- scores.neigh$bioclim1/10
 
 climatespace <- ggplot(data= scores.neigh) +
   geom_point(aes(x= bioclim1, y = bioclim12, color = similarity)) +
-  geom_point(data = scores.neigh[i,], aes(x= bioclim1, y = bioclim12), color="black") +
-  scale_colour_gradientn(colours = colfunc(10)) +
-     xlab("Annual mean temperature (\u00B0C)")+ 
-     ylab("Annual precipitation (mm)") +
+  geom_point(data = scores.neigh[n,], aes(x= bioclim1, y = bioclim12), size = 5, shape = 8, color="black") +
+  scale_colour_gradientn(name = "Climate\nrange\nbreadths\n(%)",
+                         colours = colfunc(10),
+                         limits = c(0, 100)) +
+  theme(legend.title = element_text(size = 20, face = "bold")) +
+  xlab("Annual mean temperature (\u00B0C)")+ 
+  ylab("Annual precipitation (mm)") +
   theme_classic()
 
 ggsave("example_climate.png", plot = climatespace, width = 15, height = 10, units = "cm")

@@ -107,6 +107,44 @@ for(i in c("Euclidean","MESS", "Mahalanobis")){
   
 }
 
+### Mahalanobis map needs change the colour bar
+index <- "Mahalanobis"
+  # Combine index to coordinate data
+  index.dat <- dat2[,c("x", "y", index)]
+  colnames(index.dat)[3] <- index
+
+  # Set colour scale 
+  min(index.dat[,index])
+  breaks.index <- c(-2300, -1000, -500, -250, -100, seq(-50, 0, 10)
+                    )
+  index.dat$brks <- cut(index.dat[,index], 
+                        breaks = breaks.index,
+                        labels = c("-2300 - -1000", "-1000 - -500","-500 - -250", "-250 - -100", 
+                                   "-100 - -50", "-50 - -40","-40 - -30", "-30 - -20","-20 - -10", "-10 - 0"
+                        )
+  )
+
+# Draw the map
+maha.legend <- ggplot(index.dat, aes_string("x", "y", fill = "brks")) + 
+  geom_raster() +
+  scale_fill_manual(index, values=setNames(colfunc(11), levels(index.dat$brks)), na.value = "transparent"
+  ) +
+  theme(axis.text        = element_blank(),
+        axis.ticks       = element_blank(),
+        axis.title       = element_blank(),
+        axis.line        = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size=20)
+  )
+# Save the map with a legend
+ggsave(plot = maha.legend, filename = "mahalegend.png")
+
+myplot[[3]] <- maha.legend +
+  theme(legend.position = "none") +
+  # Leave space on left to add legend manually later
+  theme(plot.margin=unit(c(1,3,1,1),"cm"))
+
+
 png("Y:\\SimilarityIndices_5km_neighbourhood.png", width = 1200, height = 550)
 
 # Plot in multiple panels

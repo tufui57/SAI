@@ -1,4 +1,6 @@
-### Comparison of indices
+#######################################################
+### Comparison of similarity indices with SAI
+#######################################################
 
 # Correlation matrix
 setwd("Y://5th chapter SAI chapter//meta data")
@@ -83,4 +85,31 @@ plot(nzland)
 points(dat3[sai.range & euc.range, c("x","y")],
        col="red"
        )
+dev.off()
+
+
+
+###########################################################################
+### Why the frequency histograms look wierd?
+###########################################################################
+
+png("Y://sai_maha.png")
+hist(scale(dat3$SAI), col = rgb(1,0,0, alpha = 0.4),
+     xlim=c(-10,10), ylim=c(0,8000), 
+     main="SAI vs Mahalanobis", xlab="scaled values")
+hist(scale(dat3$Mahalanobis), add=TRUE, col=rgb(0,1,0, alpha = 0.4))
+dev.off()
+
+png("Y://sai_euc.png")
+hist(scale(dat3$SAI), col = rgb(1,0,0, alpha = 0.4),
+     xlim=c(-10,10), ylim=c(0,3500), 
+     main="SAI vs Euclidean", xlab="scaled values")
+hist(scale(dat3$Euclidean), add=TRUE, col=rgb(0.5,0.5,0.5, alpha = 0.4))
+dev.off()
+
+png("Y://sai_mess.png")
+hist(scale(dat3$MESS), col = rgb(0,0,1, alpha = 0.4),
+     xlim = c(-10,10), ylim = c(0,3500), 
+     main = "SAI vs MESS", xlab="scaled values")
+hist(scale(dat3$SAI), add=TRUE, col=rgb(1,0,0, alpha = 0.4))
 dev.off()
