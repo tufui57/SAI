@@ -39,12 +39,16 @@ lgmland <- readOGR(path, LAYERS)
 load(".//LGMclimate.data")
 
 # Load current climate data
-alld <- read.csv("Y:\\Chionochloa_bioclim_landcover_history_worldclim1_1km.csv")
+alld <- read.csv("Y:\\5th chapter SAI chapter\\raw data\\Acaena_bioclim_landcover_history_worldclim1_1km.csv")
 
 d <- alld[is.na(alld$bioclim1) == F, ]
 ### Extract coordinates and cliamte to plot
 d2 <- d[, c("x", "y", "bioclim1", "bioclim6", "bioclim12", "bioclim15")]
 
+
+################################################################
+### Function to plot the bioclim map
+################################################################
 
 map_plot <- function(data, # data for map
                      colname.to.draw # character string. Colname of the data to colour
@@ -231,7 +235,7 @@ bi15_lgm <- map_plot(rasd, "bioclim15") +
   
   scale_fill_gradient("", low = cols[1], high = cols[2],
                       na.value = "white",
-                      limits = c(7, 33)
+                      limits = c(7, 36)
   )
 
 # Plot the current map
@@ -241,7 +245,7 @@ bi15_p <- map_plot(d2[, c("x", "y", "bioclim15")], "bioclim15") +
   
   scale_fill_gradient("", low = cols[1], high = cols[2],
                       na.value = "white",
-                      limits = c(7, 33)
+                      limits = c(7, 36)
   )
 
 png(paste("Y://bio15.png", sep=""), width = 1200, height = 600)

@@ -4,6 +4,8 @@ require(ggplot2)
 require(reshape2)
 library(gridExtra)
 
+setwd("Y:\\5th chapter SAI chapter\\meta data")
+
 #################################################################################
 ### Function to daw a map of spatial availability index 
 #################################################################################
@@ -96,7 +98,7 @@ dev.off()
 ### Load 5km data
 load(".\\Scores_Acaena_landcover5km.data")
 
-# # Load SAI values
+# Load SAI values
 load("SAI_5km_currentIncurrent_5000kmWindow_4var.data")
 sai <- load("SAI_5km_currentIncurrent_5000kmWindow_4var.data")
 sai <- get(sai)

@@ -7,9 +7,7 @@ source(".\\SAI\\F_SpatialAvailabilityIndex.R")
 ###################################################################################################
 
 SAI_outliers <- function(time, # "current" or "LGM"
-                         neighbour.window.size, # Size of windows to calculate the SAI (km)
-                         outlierPercent, # how many percentage of outliers should be removed from the varibale widths
-                         whole # TRUE; neighbourhood window = whole NZ
+                         outlierPercent # how many percentage of outliers should be removed from the varibale widths
 ){
   
   # Change object name of data frame with 
@@ -39,24 +37,13 @@ SAI_outliers <- function(time, # "current" or "LGM"
     # Set a point at the centre of search area
     p <- scores[i, ]
     
-    if(whole == F){
-      ######################################################################################
-      # Prepare a x a km2 neighbourhood window as an area to be searched
-      ######################################################################################
-      a <- neighbour.window.size * 1000 / 2
-      dat.x <- Count_cells_within_neighbourhood(p, scores, a, "x")
-      neighbour.window <- Count_cells_within_neighbourhood(p, dat.x, a, "y")
-      
-    }else{
-      neighbour.window <- scores
-      
-    }
-    
+    neighbour.window <- scores
+
     
     ### If any values of variables of p is outliers, the values must be replaced with min or max values of the variables.
     res<-list()
     for(j in coordinateNames){
-      res[[j]] <- check_outliers(p, scores, j, 1)
+      res[[j]] <- check_outliers(p, scores, j, outlierPercent)
     }
     
     # Replace the values
@@ -79,7 +66,7 @@ SAI_outliers <- function(time, # "current" or "LGM"
 
 for(i in c(1, 2.5, 5)){
   # Whole NZ
-sai.i <- SAI_outliers("current", 5000, outlierPercent = i, whole=T)
+sai.i <- SAI_outliers("current", outlierPercent = i)
 # Save
 save(sai.i, file = paste("SAI_5km_currentInCurrent_5000kmWindow_4var_outlier", i, ".data", sep=""))
 
@@ -89,7 +76,7 @@ save(sai.i, file = paste("SAI_5km_currentInCurrent_5000kmWindow_4var_outlier", i
 
 for(i in c(1, 2.5, 5)){
   # Whole NZ
-  sai.i <- SAI_outliers("LGM", 5000, outlierPercent = i, whole=T)
+  sai.i <- SAI_outliers("LGM", outlierPercent = i)
   # Save
   save(sai.i, file = paste("SAI_5km_LGMinLGM_5000kmWindow_4var_outlier", i, ".data", sep=""))
   

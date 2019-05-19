@@ -150,3 +150,54 @@ tm_shape(brick(prast)) +
 
 
 
+#################################################################################
+### SAIcc without X % of outliers
+#################################################################################
+sai.list <- list()
+
+# Load SAIcc
+saiwith <- load("Y://5th chapter SAI chapter//meta data//SAI_5km_currentIncurrent_5000kmWindow_4var.data")
+sai.list[["0"]] <- get(saiwith)
+
+
+for(i in as.character(c(1, 2.5, 5))){
+  sai <- load(paste("SAI_5km_currentInCurrent_5000kmWindow_4var_outlier", i, ".data", sep=""))
+  res <- get(sai)
+  
+  sai.list[[i]] <- unlist(res)
+}
+
+sai.list2 <- data.frame(do.call(cbind,sai.list))
+
+#################################################################################
+### Draw three maps of SAI of current climate at the current in one panel
+#################################################################################
+
+myplot <- list()
+myhist <- list()
+
+for(i in 1:4){
+  
+  myplot[[i]] <- plot_SAI(scores, sai.list2[[i]], time, colfunc) + theme(legend.position = "none")
+  
+  myhist[[i]] <- hist_SAI(scores, sai.list2[[i]], time)
+  
+}
+
+### Get just color scale bar
+legend.plot <- plot_SAI(scores, sai.list2[[1]], time, colfunc)
+legend <- cowplot::get_legend(legend.plot)
+
+### Get empty plot
+empty.plot <- ggplot(scores, aes(x = bioclim1, y = bioclim2)) + geom_blank() + 
+  theme_void()
+
+png("Y:\\SAIcc_outliers.png", width = 1000, height = 550)
+
+# Plot in multiple panels
+grid.arrange(
+  arrangeGrob(myplot[[2]],myplot[[3]],myplot[[4]],legend,
+              myhist[[2]],myhist[[3]],myhist[[4]], empty.plot,
+              ncol = 4, nrow = 2, heights = c(4, 1), widths = c(8,8,8,3))
+)
+dev.off()
