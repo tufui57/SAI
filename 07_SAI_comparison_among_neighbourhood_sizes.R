@@ -1,6 +1,6 @@
 
 ############################################################################################################
-## Visualize SAI diferences due to neighbourhood size
+## Boxplots for SAI within 4 diferent neighbourhood size
 ############################################################################################################
 ### Load SAI with different neighbourhood sizes
 sai.c <- list()
@@ -30,6 +30,10 @@ boxplot(sai.c2,
         )
 dev.off()
 
+############################################################################################################
+## Scatterplots for SAI within 4 diferent neighbourhood size
+############################################################################################################
+
 ### Plot SAI within limited neighbourhood against SAI within NZ
 png(filename = "SAIcc20km 50km NZ.png")
 par(mfrow=c(2,2))
@@ -42,3 +46,12 @@ plot(sai.c2$X100, sai.c2$NZ,
      xlab="SAIcc 100km", ylab="SAIcc NZ"
 )
 dev.off()
+
+############################################################################################################
+## Correlation matrix for SAIs within 4 diferent neighbourhood size
+############################################################################################################
+
+# Got to "06_correlation_SAI_multivariate.R"
+
+
+

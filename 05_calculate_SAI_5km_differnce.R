@@ -3,13 +3,13 @@
 #################################################################################
 
 # Load SAIcc
-load("SAI_5km_currentIncurrent_5000kmWindow_4var.data")
-saicc <- load("SAI_5km_currentIncurrent_5000kmWindow_4var.data")
+load("Y:\\5th chapter SAI chapter\\meta data\\SAI_5km_currentInCurrent_5000kmWindow_4var.data")
+saicc <- load("Y:\\5th chapter SAI chapter\\meta data\\SAI_5km_currentInCurrent_5000kmWindow_4var.data")
 saicc <- get(saicc)
 
 # SAIcl
-load("SAI_5km_currentInLGM_5000kmWindow_4var.data")
-saicl <- load("SAI_5km_currentInLGM_5000kmWindow_4var.data")
+load("Y:\\5th chapter SAI chapter\\meta data\\SAI_5km_currentInLGM_5000kmWindow_4var.data")
+saicl <- load("Y:\\5th chapter SAI chapter\\meta data\\SAI_5km_currentInLGM_5000kmWindow_4var.data")
 saicl <- get(saicl)
 
 ### Load coordinates of NZ at the current and the LGM
@@ -34,20 +34,20 @@ sai.diff <- merge(sai.cc, sai.cl, by=c("x","y"))
 ### Calculate the difference SAIcc - SAIcl 
 sai.diff$diff <- (sai.diff$SAIcc - sai.diff$SAIcl)
 
-#################################################################################
-### Calculate the difference SAIcc - SAIll
-#################################################################################
+# #################################################################################
+# ### Calculate the difference SAIcc - SAIll
+# #################################################################################
+# 
+# load("SAI_5km_LGMInLGM_5000kmWindow_4var.data")
+# saill <- load("SAI_5km_LGMInLGM_5000kmWindow_4var.data")
+# saill <- get(saill)
+# 
+# sai.ll <- cbind(scores.lgm[, c("x", "y")], unlist(saill))
+# colnames(sai.ll)[3] <- "SAIll"
+# 
+# # Merge the two SAIs
+# sai.diff <- merge(sai.diff, sai.ll, by=c("x","y"))
+# 
+# sai.diff$diff_cc_ll <- (sai.diff$SAIcc - sai.diff$SAIll)
 
-load("SAI_5km_LGMInLGM_5000kmWindow_4var.data")
-saill <- load("SAI_5km_LGMInLGM_5000kmWindow_4var.data")
-saill <- get(saill)
-
-sai.ll <- cbind(scores.lgm[, c("x", "y")], unlist(saill))
-colnames(sai.ll)[3] <- "SAIll"
-
-# Merge the two SAIs
-sai.diff <- merge(sai.diff, sai.ll, by=c("x","y"))
-
-sai.diff$diff_cc_ll <- (sai.diff$SAIcc - sai.diff$SAIll)
-
-save(sai.diff, file="diff_SAI_5km_wholeNZ27Feb.data")
+save(sai.diff, file="diff_SAIcc_cl_5km.data")
