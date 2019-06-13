@@ -28,8 +28,6 @@ ref <- raster("Y://GIS map and Climate data//current_landcover1km.bil")
 nzland2 <- crop(nzland, extent(ref))
 
 # Map SAI
-png("Y:\\diff_SAIcc_SAIcl_5kmtest.png", width = 900, height = 630)
-
 myplot <- ggplot(elev.dat, aes_string("x", "y", fill = "elev")) + 
   geom_raster() +
   scale_fill_gradientn(colours = terrain.colors(300), 
@@ -41,3 +39,7 @@ myplot <- ggplot(elev.dat, aes_string("x", "y", fill = "elev")) +
         panel.background = element_blank(),
         text = element_text(size=15)
   )
+
+ggsave(plot = myplot, filename = "Y:\\elevation_map.png", 
+       width = 16, height = 20, units = "cm"
+       )

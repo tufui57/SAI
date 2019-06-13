@@ -52,51 +52,38 @@ dat2 <- merge(dat, elev.dat, by=c("x","y"))
 ### Linear regression between elevation and SAI
 ########################################################################################
 
-summary(lm(dat2$X20 ~ dat2$elev))
+myplot20 <- ggplot(dat2, aes_string("elev", "X20")) + 
+  geom_point(alpha = 0.1) + 
+  geom_smooth() +
+  ylim(0, 1) +
+  theme(panel.background = element_blank(),
+        text = element_text(size=15)
+  )
 
-source(".//functions//F_plotAnalysis_clade_niche.R")
-# Plot
-myplot20 <- plotAnalysis(data = dat2, 
-                       yv = "X20", xv = "elev",
-                       showStats = T,
-                       ylabname = "SAI within 20 km neighbourhood", 
-                       xlabname = "Elevation (m)",
-                       label.point = F,
-                       genus_name = ""
-) +
-  ylim(0, 1)
 
-myplot50 <- plotAnalysis(data = dat2, 
-                          yv = "X50", xv = "elev",
-                          showStats = T,
-                          ylabname = "SAI within 50 km neighbourhood", 
-                          xlabname = "Elevation (m)",
-                          label.point = F,
-                          genus_name = ""
-) +
-  ylim(0, 1)
+myplot50 <- ggplot(dat2, aes_string("elev", "X50")) + 
+  geom_point(alpha = 0.1) + 
+  geom_smooth() +
+  ylim(0, 1) +
+  theme(panel.background = element_blank(),
+        text = element_text(size=15)
+  )
 
-summary(lm(dat2$NZ ~ dat2$elev))
-myplot100 <- plotAnalysis(data = dat2, 
-                         yv = "X100", xv = "elev",
-                         showStats = T,
-                         ylabname = "SAI within 100 km neighbourhood", 
-                         xlabname = "Elevation (m)",
-                         label.point = F,
-                         genus_name = ""
-) +
-  ylim(0, 1)
+myplot100 <- ggplot(dat2, aes_string("elev", "X100")) + 
+  geom_point(alpha = 0.1) + 
+  geom_smooth() +
+  ylim(0, 1) +
+  theme(panel.background = element_blank(),
+        text = element_text(size=15)
+  )
 
-myplotNZ <- plotAnalysis(data = dat2, 
-                          yv = "NZ", xv = "elev",
-                          showStats = T,
-                          ylabname = "SAI within New Zealand", 
-                          xlabname = "Elevation (m)",
-                          label.point = F,
-                          genus_name = ""
-) +
-  ylim(0, 1)
-
+myplotNZ <- ggplot(dat2, aes_string("elev", "NZ")) + 
+  geom_point(alpha = 0.1) + 
+  geom_smooth() +
+  ylim(0, 1) +
+  theme(panel.background = element_blank(),
+        text = element_text(size=15)
+  )
 
 png("Y:\\SAI_elevation.png", width = 600, height = 600)
 
@@ -106,6 +93,60 @@ grid.arrange(
               ncol = 2, nrow = 2)
 )
 dev.off()
+
+# 
+# source(".//functions//F_plotAnalysis_clade_niche.R")
+# # Plot
+# myplot20 <- plotAnalysis(data = dat2, 
+#                        yv = "X20", xv = "elev",
+#                        showStats = T,
+#                        ylabname = "SAI within 20 km neighbourhood", 
+#                        xlabname = "Elevation (m)",
+#                        label.point = F,
+#                        genus_name = ""
+# ) +
+#   ylim(0, 1)
+# 
+# myplot50 <- plotAnalysis(data = dat2, 
+#                           yv = "X50", xv = "elev",
+#                           showStats = T,
+#                           ylabname = "SAI within 50 km neighbourhood", 
+#                           xlabname = "Elevation (m)",
+#                           label.point = F,
+#                           genus_name = ""
+# ) +
+#   ylim(0, 1)
+# 
+# summary(lm(dat2$NZ ~ dat2$elev))
+# myplot100 <- plotAnalysis(data = dat2, 
+#                          yv = "X100", xv = "elev",
+#                          showStats = T,
+#                          ylabname = "SAI within 100 km neighbourhood", 
+#                          xlabname = "Elevation (m)",
+#                          label.point = F,
+#                          genus_name = ""
+# ) +
+#   ylim(0, 1)
+# 
+# myplotNZ <- plotAnalysis(data = dat2, 
+#                           yv = "NZ", xv = "elev",
+#                           showStats = T,
+#                           ylabname = "SAI within New Zealand", 
+#                           xlabname = "Elevation (m)",
+#                           label.point = F,
+#                           genus_name = ""
+# ) +
+#   ylim(0, 1)
+# 
+# 
+# png("Y:\\SAI_elevation.png", width = 600, height = 600)
+# 
+# # Plot in multiple panels
+# grid.arrange(
+#   arrangeGrob(myplot20, myplot50, myplot100, myplotNZ,
+#               ncol = 2, nrow = 2)
+# )
+# dev.off()
 
 ########################################################################################
 ### Compare means of SAI between high and low elevational areas
