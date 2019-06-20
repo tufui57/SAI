@@ -41,30 +41,41 @@ load(".\\Scores_Acaena_landcover5km.data")
 ## Identify the cells with the lowest/highest 25% of SAIs within 4 diferent neighbourhood size
 ############################################################################################################
 
-quntile_SAI <- function(percent_top
+quntile_top_SAI <- function(percent
 ){
-  ### The lowest 25% of SAI = SAI < 25% quantile
+  ### The highest 25% of SAI = SAI > 75% quantile
   qu <- lapply(sai.c2, function(x){
-    x < quantile(x, probs = seq(0, 1, percent_top/100 ))[2]
+    x > quantile(x, probs = seq(0, 1, percent/100 ))[length(seq(0, 1, percent/100)) - 1]
   }
   )
   qu_top <- do.call(cbind, qu)
   
   qu_top_dat <- scores[rowSums(qu_top) == 4, ]
   
+  return(qu_top_dat)
+}
+
+quntile_bottom_SAI <- function(percent
+){
+  ### The lowest 25% of SAI = SAI < 25% quantile
   qu <- lapply(sai.c2, function(x){
-    x > quantile(x, probs = seq(0, 1, percent_top/100 ))[length(seq(0, 1, percent_top/100)) - 1]
+    x < quantile(x, probs = seq(0, 1, percent/100 ))[2]
   }
   )
-  qu_bottom <- do.call(cbind, qu)
+  qu_bot <- do.call(cbind, qu)
   
-  qu_bottom_dat <- scores[rowSums(qu_bottom) == 4, ]
+  qu_bot_dat <- scores[rowSums(qu_bot) == 4, ]
   
-  res <- list(qu_top_dat, qu_bottom_dat)
-  return(res)
+  return(qu_bot_dat)
 }
+############################################################################################################
+## Identify the cells with the lowest/highest 25% of SAIs within 4 diferent neighbourhood size
+############################################################################################################
+
 ### The lowest/highest 25% of SAI = SAI < 25% quantile
-qu10 <- quntile_SAI(25)
+qu_top25 <- quntile_top_SAI(25)
+qu_bot25 <- quntile_bottom_SAI(25)
+res <- list(qu_top25, qu_bot25)
 
 # Outline of NZ
 path = "Y:\\GIS map and Climate data\\lds-nz-coastlines-and-islands-polygons-topo-150k-SHP\\nz-coastlines-and-islands-polygons-topo-150k.shp"
@@ -81,7 +92,7 @@ nzland2 <- crop(nzland, extent(ref))
 ### Draw a map
 ##################
 
-myplot25 <- ggplot(qu10[[1]], aes_string("x", "y")) + 
+myplot25 <- ggplot(res[[2]], aes_string("x", "y")) + 
   geom_raster(fill = "blue") +
   geom_polygon(data=nzland2,aes(x=long,y=lat,group=group), fill=NA, col="black") +
   theme(axis.text        = element_blank(),
@@ -92,7 +103,7 @@ myplot25 <- ggplot(qu10[[1]], aes_string("x", "y")) +
   )
 
 
-myplot75 <- ggplot(qu10[[2]], aes_string("x", "y")) + 
+myplot75 <- ggplot(res[[1]], aes_string("x", "y")) + 
   geom_raster(fill = "red") +
   geom_polygon(data=nzland2,aes(x=long,y=lat,group=group), fill=NA, col="black") +
   theme(axis.text        = element_blank(),
@@ -113,25 +124,37 @@ dev.off()
 ## Identify the cells with the lowest 25% of SAI within 20 km and highest 25% of SAI within NZ
 ############################################################################################################
 
-quntile_SAI <- function(percent_top
+data <- cbind(scores, sai.c2)
+
+quntile_bot_SAI <- function(percent,
+                            data, # 
+                            neigh # colum name of neighbourhood size
 ){
   ### The lowest 25% of SAI = SAI < 25% quantile
-  qu <- (sai.c2$X20 < quantile(sai.c2$X20, probs = seq(0, 1, percent_top/100 ))[2])
+  qu <- (data[,neigh] < quantile(data[,neigh], probs = seq(0, 1, percent/100 ))[2])
   
-  qu_top_dat <- scores[qu, ]
-  
-  ### The highest 25% of SAI = SAI > 75% quantile
-  qu <- (sai.c2$NZ > quantile(sai.c2$NZ, probs = seq(0, 1, percent_top/100 ))[length(seq(0, 1, percent_top/100)) - 1])
-  qu_bottom_dat <- scores[qu, ]
-  
-  res <- merge(qu_top_dat, qu_bottom_dat, by=c("x","y"))
-  return(res)
+  qu_bot_dat <- data[qu, ]
+  return(qu_bot_dat)
 }
-## Areas with locally rare but natuionally common climate
-qu25 <- quntile_SAI(25)
 
-myplot1 <- ggplot(qu25, aes_string("x", "y")) + 
-  geom_raster(fill = "purple") +
+quntile_top_SAI <- function(percent,
+                            data, # 
+                            neigh # colum name of neighbourhood size
+){
+  ### The highest 25% of SAI = SAI > 75% quantile
+  qu <- (data[,neigh] > quantile(data[,neigh], probs = seq(0, 1, percent/100 ))[length(seq(0, 1, percent/100)) - 1])
+  qu_top_dat <- data[qu, ]
+
+  return(qu_top_dat)
+
+}
+
+
+## Areas with locally rare but nationally common climate
+quLR <- merge(quntile_top_SAI(25, data, "NZ"), quntile_bot_SAI(25, data, "X20"), by=c("x","y"))
+
+myplot1 <- ggplot(quLR, aes_string("x", "y")) + 
+  geom_raster(fill = "brown") +
   geom_polygon(data=nzland2,aes(x=long,y=lat,group=group), fill=NA, col="black") +
   ggtitle("Locally rare but nationally common climates") +
   theme(axis.text        = element_blank(),
@@ -141,26 +164,15 @@ myplot1 <- ggplot(qu25, aes_string("x", "y")) +
         text = element_text(size=20)
   )
 
+############################################################################################################
+## Identify the cells with the highest 25% of SAI within 20 km and lowest 25% of SAI within NZ
+############################################################################################################
 
-quntile_SAI <- function(percent_top
-){
-  ### The lowest 25% of SAI = SAI < 25% quantile
-  qu <- (sai.c2$NZ < quantile(sai.c2$NZ, probs = seq(0, 1, percent_top/100 ))[2])
-  
-  qu_top_dat <- scores[qu, ]
-  
-  ### The highest 25% of SAI = SAI > 75% quantile
-  qu <- (sai.c2$X20 > quantile(sai.c2$X20, probs = seq(0, 1, percent_top/100 ))[length(seq(0, 1, percent_top/100)) - 1])
-  qu_bottom_dat <- scores[qu, ]
-  
-  res <- merge(qu_top_dat, qu_bottom_dat, by=c("x","y"))
-  return(res)
-}
-## Areas with locally rare but natuionally common climate
-qu25 <- quntile_SAI(25)
+## Areas with locally rare but nationally common climate
+quLC <- merge(quntile_top_SAI(25, data, "X20"), quntile_bot_SAI(25, data, "NZ"), by=c("x","y"))
 
-myplot2 <- ggplot(qu25, aes_string("x", "y")) + 
-  geom_raster(fill = "orange") +
+myplot2 <- ggplot(quLC, aes_string("x", "y")) + 
+  geom_raster(fill = "brown") +
   geom_polygon(data=nzland2,aes(x=long,y=lat,group=group), fill=NA, col="black") +
   ggtitle("Locally common but nationally rare climates") +
   theme(axis.text        = element_blank(),
@@ -170,7 +182,50 @@ myplot2 <- ggplot(qu25, aes_string("x", "y")) +
         text = element_text(size=20)
   )
 
-png("Y:\\SAI_locallyCommon_nationallyRare.png", width = 1000, height = 550)
+############################################################################################################
+## Identify the cells with the lowest 25% of SAI within 20 km and NZ
+############################################################################################################
+
+## Areas with locally and nationally rare climate
+quLC <-  merge(quntile_top_SAI(25, data, "X20"), quntile_top_SAI(25, data, "NZ"), by=c("x","y"))
+
+myplot3 <- ggplot(quLC, aes_string("x", "y")) + 
+  geom_raster(fill = "brown") +
+  geom_polygon(data=nzland2,aes(x=long,y=lat,group=group), fill=NA, col="black") +
+  ggtitle("Locally and nationally common climates") +
+  theme(axis.text        = element_blank(),
+        axis.ticks       = element_blank(),
+        axis.title       = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size=20)
+  )
+
+############################################################################################################
+## Identify the cells with the highest 25% of SAI within 20 km and NZ
+############################################################################################################
+
+## Areas with locally and nationally rare climate
+quLC <-  merge(quntile_bot_SAI(25, data, "X20"), quntile_bot_SAI(25, data, "NZ"), by=c("x","y"))
+
+myplot4 <- ggplot(quLC, aes_string("x", "y")) + 
+  geom_raster(fill = "brown") +
+  geom_polygon(data=nzland2,aes(x=long,y=lat,group=group), fill=NA, col="black") +
+  ggtitle("Locally and nationally rare climates") +
+  theme(axis.text        = element_blank(),
+        axis.ticks       = element_blank(),
+        axis.title       = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size=20)
+  )
+
+
+############################################################################################################
+## Plot locally/nationally rare/common climate
+############################################################################################################
+
+png("Y:\\SAI_locallynatinally.png", width = 1000, height = 1100)
 # Plot in multiple panels
-grid.arrange(myplot1, myplot2, ncol = 2)
+grid.arrange(myplot1, myplot4, 
+             myplot3, myplot2,
+             nrow = 2, ncol = 2)
 dev.off()

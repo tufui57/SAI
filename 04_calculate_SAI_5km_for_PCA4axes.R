@@ -27,19 +27,11 @@ save(scores, file = ".\\Scores_5km_PCA_4axes.data")
 
 SAI_for_limited_ranges <- function(time, # "current" or "LGM"
                                    neighbour.window.size, # Size of windows to calculate the SAI (km)
-                                   standardize, # Standardize cliamte data
                                    whole # TRUE; neighbourhood window = whole NZ
 ){
   
   # Change object name of data frame with 
   coordinateNames <- paste("PC", 1:4, sep="")
-  
-  if(standardize == TRUE){
-    scores <- cbind(scores[, !(colnames(scores) %in% coordinateNames)], scale(scores[, coordinateNames]))
-  }else{
-    scores <- scores
-  }
-  
   
   sai <- list()
   
@@ -80,17 +72,7 @@ SAI_for_limited_ranges <- function(time, # "current" or "LGM"
   return(sai)
 }
 
-###### Current
-
-for(i in c(20,50,100)){
-  ### i km neighbourhood window
-  sai.i<- SAI_for_limited_ranges("current", i, standardize = FALSE, whole=F)
-  # Save
-  save(sai.i, file = paste("SAI_5km_currentInCurrent_", i,"kmWindow_PCA4axes.data", sep=""))
-  
-}
-
 # Whole NZ
-sai.i<- SAI_for_limited_ranges("current", 5000, standardize = FALSE, whole=T)
+sai.i<- SAI_for_limited_ranges("current", 5000, whole=T)
 # Save
 save(sai.i, file = "SAI_5km_currentInCurrent_5000kmWindow_PCA4axes.data")

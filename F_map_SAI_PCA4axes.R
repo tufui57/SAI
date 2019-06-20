@@ -105,12 +105,12 @@ load(".\\Scores_Acaena_landcover5km.data")
 sai.or <- cbind(scores[, c("x", "y")], unlist(sai))
 colnames(sai.or)[3] <- "SAIcc"
 
-# Load SAI values
+# Load SAI besed on 4 PC axes using 4 bioclim
 load("SAI_5km_currentInCurrent_5000kmWindow_PCA4axes.data")
 sai4 <- load("SAI_5km_currentInCurrent_5000kmWindow_PCA4axes.data")
 sai4 <- get(sai4)
 
-# Load SAI values
+# Load SAI besed on 4 PC axes using 19 bioclim
 load("SAI_5km_currentInCurrent_5000kmWindow_PCA4axes_from19.data")
 sai19 <- load("SAI_5km_currentInCurrent_5000kmWindow_PCA4axes_from19.data")
 sai19 <- get(sai19)
@@ -138,3 +138,38 @@ plot(sais$SAIcc, sais$SAI4,
 #summary(lm(sais$SAIcc ~ sais$SAI4))
 dev.off()
 
+
+
+
+
+
+#################################################################################
+### Combine maps 
+#################################################################################
+
+### Load 5km data
+load(".\\Scores_5km_PCA_4axes_from19.data")
+
+# Load SAI values
+load("SAI_5km_currentInCurrent_5000kmWindow_PCA4axes_from19.data")
+sai19 <- load("SAI_5km_currentInCurrent_5000kmWindow_PCA4axes_from19.data")
+sai19 <- get(sai19)
+
+### Load 5km data
+load(".\\Scores_5km_PCA_4axes.data")
+
+# Load SAI values
+load("SAI_5km_currentInCurrent_5000kmWindow_PCA4axes.data")
+sai4 <- load("SAI_5km_currentInCurrent_5000kmWindow_PCA4axes.data")
+sai4 <- get(sai4)
+
+# Map SAI
+png(paste("Y:\\", time ,"_5km_PCA4axes.png", sep = ""), width = 900, height = 630)
+
+myplot <- plot_SAI(scores, sai4, time, colfunc)
+myplot2 <- plot_SAI(scores, sai19, time, colfunc)
+
+# Plot in multiple panels
+grid.arrange(myplot, myplot2,
+             ncol = 2, nrow = 1)
+dev.off()

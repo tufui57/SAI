@@ -8,7 +8,7 @@ setwd("Y://5th chapter SAI chapter//meta data")
 # Load spatial similarity indices
 sai <- load("SAI_5km_currentInCurrent_5000kmWindow_4var.data")
 sai <- get(sai)
-load("Y://5th chapter SAI chapter//raw data//Scores_Acaena_landcover5km.data")
+load("Y://Scores_Chionochloa_landcover5km.data")
 scores.sai <- cbind(scores, unlist(sai))
 colnames(scores.sai)[length(scores.sai)] <- "SAI"
 
