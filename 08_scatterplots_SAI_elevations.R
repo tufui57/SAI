@@ -55,6 +55,8 @@ dat2 <- merge(dat, elev.dat, by=c("x","y"))
 myplot20 <- ggplot(dat2, aes_string("elev", "X20")) + 
   geom_point(alpha = 0.1) + 
   geom_smooth() +
+  xlab("Elevation (m)") +
+  ylab("20km neighbourhood") +
   ylim(0, 1) +
   theme(panel.background = element_blank(),
         text = element_text(size=15)
@@ -64,6 +66,8 @@ myplot20 <- ggplot(dat2, aes_string("elev", "X20")) +
 myplot50 <- ggplot(dat2, aes_string("elev", "X50")) + 
   geom_point(alpha = 0.1) + 
   geom_smooth() +
+  xlab("Elevation (m)") +
+  ylab("50km neighbourhood") +
   ylim(0, 1) +
   theme(panel.background = element_blank(),
         text = element_text(size=15)
@@ -72,6 +76,8 @@ myplot50 <- ggplot(dat2, aes_string("elev", "X50")) +
 myplot100 <- ggplot(dat2, aes_string("elev", "X100")) + 
   geom_point(alpha = 0.1) + 
   geom_smooth() +
+  xlab("Elevation (m)") +
+  ylab("100km neighbourhood") +
   ylim(0, 1) +
   theme(panel.background = element_blank(),
         text = element_text(size=15)
@@ -80,6 +86,8 @@ myplot100 <- ggplot(dat2, aes_string("elev", "X100")) +
 myplotNZ <- ggplot(dat2, aes_string("elev", "NZ")) + 
   geom_point(alpha = 0.1) + 
   geom_smooth() +
+  xlab("Elevation (m)") +
+  ylab("New Zealand") +
   ylim(0, 1) +
   theme(panel.background = element_blank(),
         text = element_text(size=15)
@@ -89,7 +97,7 @@ png("Y:\\SAI_elevation.png", width = 600, height = 600)
 
 # Plot in multiple panels
 grid.arrange(
-  arrangeGrob(myplot20, myplot50, myplot100, myplotNZ,
+  arrangeGrob(myplotNZ, myplot20, myplot50, myplot100, 
               ncol = 2, nrow = 2)
 )
 dev.off()
