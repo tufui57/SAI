@@ -2,16 +2,16 @@
 ### Calculate spatial availability index (SAI) on 2 dimentional ordination space 
 ######################################################################################
 
-# Steps for the SAI calculation
-# 1. Set 20x20km2 neighbourhood window of a centre cell on geographycal map. 
-# For centre points along coastlines, the windows don't have to have 400 1km grid cells.
-# 2. Set 11 neighbourhood sizes (0, 10%, ..., 90%, 100% of the environmental breadth of cells within the window) on environmental space
-# The largest neighbourhood must cover all NZ environment space regardless of the location of centre cell on environmental space.
-# 3. Identify the cells within the neighbourhood of a centre cell at each size and variable i (i=1,2,...,k)
-# 4. Among the identified cells, identify cells within the neighbourhood for each size and variable i+1
-# 5. Repeat the step 3. You'll get 11 sets of cells.
-# 6. Calculate the ratio of the cells against all cells
-# 7. Calculate AUC of the ratio. The AUC is SAI for the centre cell.
+### Steps for SAI calculation
+# 1. Prepare a x a km2 neighbourhood square for a target grid cell. 
+# For the cells along coastlines, the neighbourhood can overlap with the sea.
+# 2. Prepare 11 climate range breadth steps (0, 10%, ..., 90%, 100% of the total range breadth of cells within the neighbourhood).
+# At 100% range step, the climate range, (climate condition of target cell - the range) - (climate condition of target cell + the range), 
+# must cover all climate conditions of any grid cells in NZ.
+# 3. Identify the cells within the neighbourhood, cells with analogous climates, for each climate range step and variable.
+# 6. Calculate the proportion of the cells with analogous climates over all grid cells in NZ.
+# 7. Draw a graph which its x axis is k (0, 10%, ..., 90%, 100%) and the y axis is the proportion.
+# 8. Calculate Area Under the Curve. The AUC is SAI for the target grid cell.
 
 ######################################################################################
 # Prepare radius size vector
