@@ -12,7 +12,7 @@ library(cowplot)
 ### Load SAI with different neighbourhood sizes
 sai.c <- list()
 for(i in as.character(c(20,50,100))){
-  a <- load(paste(".\\SAI_5km_currentInCurrent_", i,"kmNeighbourhood.data", sep=""))
+  a <- load(paste(".\\SAIcl_", i,"kmNeighbourhood.data", sep=""))
   a <- get(a)
   sai.c[[i]] <- unlist(a)
 }

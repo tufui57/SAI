@@ -71,8 +71,8 @@ colfunc <- colorRampPalette(c("brown", "yellow", "green", "cyan", "blue", "viole
 load(".\\Scores_Acaena_landcover5km.data")
 
 # Load SAI values
-load("SAI_5km_currentIncurrent_5000kmWindow_4var.data")
-sai <- load("SAI_5km_currentIncurrent_5000kmWindow_4var.data")
+load("SAIcc_NZ_4var.data")
+sai <- load("SAIcc_NZ_4var.data")
 sai <- get(sai)
 
 time="SAIcc"
@@ -95,8 +95,8 @@ dev.off()
 ### Load 5km data
 load(".\\Scores_Acaena_landcover5km.data")
 # # Load SAI values
-load(".\\SAI_5km_currentInLGM_5000kmWindow_4var.data")
-sai <- load(".\\SAI_5km_currentInLGM_5000kmWindow_4var.data")
+load(".\\SAIcl_NZ_4var22sep2019.data")
+sai <- load(".\\SAIcl_NZ_4var22sep2019.data")
 sai <- get(sai)
 
 time="SAIcl"
