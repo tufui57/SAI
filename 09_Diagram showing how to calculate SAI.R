@@ -130,7 +130,7 @@ colfunc <- colorRampPalette(c("red", "yellow"))
 
 brks <- seq(0, 100, 10)
 
-png("example_map.png")
+png("example_map.png", width = 630, height = 900)
 plot(prast, col = colfunc(10), legend=FALSE, breaks = brks)
 points(p[, c("x","y")], pch = 8, cex = 1.5)
 plot(prast, legend.only=TRUE, col=colfunc(10),
