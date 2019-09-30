@@ -301,19 +301,20 @@ calc_SAI <- function(
       names(ranges) <- climateNames
       
     }else{
-      
+
       ## If data1!= data2
       if(is.null(neighbourhood.size)){
-        
+
         #  Cells to be searched for analogous climates
         neighbour.window <- data2
-        
+
         # To get a set of climate range breadths, combine cells of data1 and data2 within the neighbourhood
-        neighbour.window.data1_2 <- rbind(neighbour.window[c(coordinateNames, climateNames)], 
-                                          data1[c(coordinateNames, climateNames)])
-        ranges <- lapply(climateNames, get_radius_size, dat = neighbour.window.data1_2)
+        neighbour.window.data2_p <- rbind(neighbour.window[c(coordinateNames, climateNames)], 
+                                          p[c(coordinateNames, climateNames)])
+        ranges <- lapply(climateNames, get_radius_size, dat = neighbour.window.data2_p)
         names(ranges) <- climateNames
-        
+      
+
       }else{
         
         # Prepare a neighbourhood square to search analogous climate from.
