@@ -69,9 +69,7 @@ colfunc <- colorRampPalette(c("brown", "yellow", "green", "cyan", "blue", "viole
 ### DraW MAPS 
 #################################################################################
 
-load(".//SAIcc_swissRegion1_25km_neighbourhood.data")
-
-load(".//SAIcc_swissRegion2_25km_neighbourhood.data")
+swiss <- read.csv("Y://swiss_all_climate_2.csv")
 
 # Region 1
 p = swiss[(swiss$LONG <= 7.65) & (swiss$LONG >= 7.4),]
@@ -81,33 +79,86 @@ reg1 <- p[(p$LAT <= 47.3) & (p$LAT >= 47),]
 p = swiss[(swiss$LONG <= 7.4) & (swiss$LONG >= 7.15),]
 reg2 <- p[(p$LAT <= 46.55) & (p$LAT >= 46.2),]
 
+# Region 3
+p = swiss[(swiss$LONG <= 8.9) & (swiss$LONG >= 8.65),]
+reg3 <- p[(p$LAT <= 46.75) & (p$LAT >= 46.45),]
+
+#################################################################################
+### DraW
+#################################################################################
+
+figure_sai <- function(i,j, plot = TRUE){
+  a <- load(paste("SAIcc_of_swissRegion", i, "_in_region", j, "_p.data", sep = ""))
+  a <- get(a)
+  
+  if(i==1){
+    region = reg1
+  }
+  if(i==2){
+    region = reg2
+  }
+  if(i==3){
+    region = reg3
+  }
+  
+  myplot <- plot_SAI(scores = region, sai = a, nameOfsai = "SAIcc", coordinateNames = c("LONG", "LAT"), colfunc) +
+    ggtitle(paste("EP of region", i, "in region", j))
+  
+  if(plot==T){
+  png(paste("Y://ep.swissRegion", i, "_in_region", j, ".png", sep=""), width = 900, height = 630)
+  
+  print(myplot)
+  
+  dev.off()    
+  }else{
+    myplot <- plot_SAI(scores = region, sai = a, nameOfsai = "SAIcc", coordinateNames = c("LONG", "LAT"), colfunc)+ theme(legend.position="none")
+      
+    return(myplot)
+  }
+
+}
+
+map31 <- figure_sai(3,1, plot=F)
+
+map32 <- figure_sai(3,2, plot=F)
+
+map12 <- figure_sai(1,2, plot=F)
+
+map13 <- figure_sai(1,3, plot=F)
+
+map21 <- figure_sai(2,1, plot=F)
+
+map23 <- figure_sai(2,3, plot=F)
 
 
-# png("Y://sai.swissRegion2_25km.png", width = 900, height = 630)
-# myplot <- plot_SAI(scores = reg2, sai = sai.swiss2, nameOfsai = "SAIcc", coordinateNames = c("LONG", "LAT"), colfunc)
-# myhist <- hist_SAI(reg2, sai.swiss2, nameOfsai = "SAIcc", coordinateNames = c("LONG","LAT"))
-# 
-# # Plot in multiple panels
-# grid.arrange(myplot, myhist,
-#              ncol = 2, nrow = 1, widths = c(2, 1))
-# dev.off()
 
+load(".//SAIcc_swissRegion1_25km_neighbourhood_ref.data")
+load(".//SAIcc_swissRegion2_25km_neighbourhood_ref.data")
+load(".//SAIcc_swissRegion3_25km_neighbourhood_ref.data")
 
+map1 <- plot_SAI(scores = reg1, sai = sai.swiss, nameOfsai = "SAIcc", coordinateNames = c("LONG", "LAT"), colfunc)+ theme(legend.position="none")
+map2 <- plot_SAI(scores = reg2, sai = sai.swiss2, nameOfsai = "SAIcc", coordinateNames = c("LONG", "LAT"), colfunc)+ theme(legend.position="none")
+map3 <- plot_SAI(scores = reg3, sai = sai.swiss3, nameOfsai = "SAIcc", coordinateNames = c("LONG", "LAT"), colfunc)+ theme(legend.position="none")
 
-# Combine SAI to coordinate data
-coordinateNames = c("LONG","LAT")
-sai.dat <- cbind(reg2[, coordinateNames], unlist(sai.swiss2))
-colnames(sai.dat)[3] <- "SAIcc"
+png("Y://ep.swissRegion.png", width = 1500, height = 1500)
 
-png("Y://sai.swissRegion2.png", width = 900, height = 630)
-ggplot(sai.dat) + 
-  geom_raster(aes_string(coordinateNames[1], coordinateNames[2], fill="SAIcc")) +
-  theme(axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        axis.title       = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size=20)
-  )
-
+grid.arrange(map1, map12, map13, 
+             map21, map2, map23,
+             map31, map32, map3,
+             nrow=3)
 dev.off()
+
+
+
+# png("Y://sai.swissRegion2_in_region1.png", width = 900, height = 630)
+# ggplot(sai.dat) + 
+#   geom_raster(aes_string(coordinateNames[1], coordinateNames[2], fill="SAIcc")) +
+#   theme(axis.text        = element_blank(),
+#         axis.ticks       = element_blank(),
+#         axis.title       = element_blank(),
+#         panel.background = element_blank(),
+#         text = element_text(size=20)
+#   )
+# 
+# dev.off()
 
