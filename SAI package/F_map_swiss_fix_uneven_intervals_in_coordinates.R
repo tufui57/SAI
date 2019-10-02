@@ -72,7 +72,7 @@ res.swiss3 <- res.swiss2[!is.na(res.swiss2$V3), ]
 colnames(res.swiss3) <- c("Longitude", "Latitude", "Elevation")
 
 # Add squares showing the example regions on the map
-d <- data.frame(x1=c(7.4,7.15,8.65), x2=c(7.65,7.4,8.9), y1=c(47,46.225,46.45), y2=c(47.3,46.525,46.75))
+d <- data.frame(x1 = c(7.4,7.15,8.65), x2 = c(7.65,7.4,8.9), y1 = c(47,46.225,46.45), y2 = c(47.3,46.525,46.75))
 d2 <- data.frame(cbind(d$x1 - 0.2, d$x2 + 0.2, d$y1 - 0.2, d$y2 + 0.2))
 colnames(d2) <- colnames(d)
 
@@ -83,12 +83,13 @@ ggplot(res.swiss3, aes_string("Longitude", "Latitude", fill = "Elevation")) +
   geom_raster() +
   scale_fill_gradientn( colors=c('#a6611a','#dfc27d','#f5f5f5','#80cdc1','#018571')) +
   geom_rect(data = d, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), color = "black", 
-            alpha = 0, inherit.aes = FALSE) +
+            alpha = 0, inherit.aes = FALSE, size = 1) +
   geom_rect(data = d2, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), color = "black", 
-            alpha = 0, inherit.aes = FALSE, linetype = 2) +
+            alpha = 0, inherit.aes = FALSE, linetype = 2, size = 1) +
   geom_polygon(data = border,aes(x = long, y = lat, group = group), fill = NA, col = "black") +
   theme(panel.background = element_blank(),
-        text = element_text(size=15)
+        panel.border= element_rect(color="black", fill = NA),
+        text = element_text(size=25)
   )
 dev.off()
 

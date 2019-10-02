@@ -105,7 +105,7 @@ reg3 <- p[(p$LAT <= 46.75) & (p$LAT >= 46.45),]
 
 # For two different regions, SAI within a neighbourhood doesn't make sense.
 
-sai.swiss1in2 <- calc_SAI(data1 = reg1,
+sai.swiss1in2 <- calc_EP(data1 = reg1,
                           data2 = reg2,
                           climateNames = climateNames,
                           coordinateNames = c("LATm","LONGm")
@@ -116,7 +116,7 @@ save(sai.swiss1in2, file = "SAIcc_of_swissRegion1_in_region2.data")
 # tes1 <- sai.swiss1in2
 # mean(unlist(tes1))
 
-sai.swiss1in3 <- calc_SAI(data1 = reg1,
+sai.swiss1in3 <- calc_EP(data1 = reg1,
                           data2 = reg3,
                           climateNames = climateNames,
                           coordinateNames = c("LATm","LONGm")
@@ -124,7 +124,7 @@ sai.swiss1in3 <- calc_SAI(data1 = reg1,
 # Save
 save(sai.swiss1in3, file = "SAIcc_of_swissRegion1_in_region3.data")
 
-sai.swiss2in1 <- calc_SAI(data1 = reg2,
+sai.swiss2in1 <- calc_EP(data1 = reg2,
                           data2 = reg1,
                           climateNames = climateNames,
                           coordinateNames = c("LATm","LONGm")
@@ -132,7 +132,7 @@ sai.swiss2in1 <- calc_SAI(data1 = reg2,
 # Save
 save(sai.swiss2in1, file = "SAIcc_of_swissRegion2_in_region1.data")
 
-sai.swiss2in3 <- calc_SAI(data1 = reg2,
+sai.swiss2in3 <- calc_EP(data1 = reg2,
                           data2 = reg3,
                           climateNames = climateNames,
                           coordinateNames = c("LATm","LONGm")
@@ -140,7 +140,7 @@ sai.swiss2in3 <- calc_SAI(data1 = reg2,
 # Save
 save(sai.swiss2in3, file = "SAIcc_of_swissRegion2_in_region3.data")
 
-sai.swiss3in1 <- calc_SAI(data1 = reg3,
+sai.swiss3in1 <- calc_EP(data1 = reg3,
                           data2 = reg1,
                           climateNames = climateNames,
                           coordinateNames = c("LATm","LONGm")
@@ -148,7 +148,7 @@ sai.swiss3in1 <- calc_SAI(data1 = reg3,
 # Save
 save(sai.swiss3in1, file = "SAIcc_of_swissRegion3_in_region1.data")
 
-sai.swiss3in2 <- calc_SAI(data1 = reg3,
+sai.swiss3in2 <- calc_EP(data1 = reg3,
                           data2 = reg2,
                           climateNames = climateNames,
                           coordinateNames = c("LATm","LONGm")

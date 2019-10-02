@@ -37,30 +37,6 @@ plot_SAI <- function(scores, sai, nameOfsai,
   
 }
 
-hist_SAI <- function(scores, sai, nameOfsai,
-                     coordinateNames # the order must be c("x", "y")
-){
-  
-  # Combine SAI to coordinate data
-  sai.dat <- cbind(scores[, coordinateNames], unlist(sai))
-  colnames(sai.dat)[3] <- nameOfsai
-  
-  myhist <- ggplot(sai.dat, aes_string(x = nameOfsai)) +
-    geom_histogram(data = sai.dat, bins = 100) +
-    xlim(0,1) +
-    xlab(nameOfsai) +
-    theme(axis.text.y = element_blank(),
-          axis.text.x = element_text(angle = 270, vjust = 0.25),
-          axis.title.y = element_text(angle = 270),
-          axis.ticks.y = element_blank()
-    ) +
-    theme(panel.background = element_rect(fill = 'gray96'))
-  
-  return(myhist)
-  
-}
-
-
 #### Set colour gradient
 colfunc <- colorRampPalette(c("brown", "yellow", "green", "cyan", "blue", "violet", "red"))
 
@@ -77,7 +53,7 @@ reg1 <- p[(p$LAT <= 47.3) & (p$LAT >= 47),]
 
 # Region 2
 p = swiss[(swiss$LONG <= 7.4) & (swiss$LONG >= 7.15),]
-reg2 <- p[(p$LAT <= 46.55) & (p$LAT >= 46.2),]
+reg2 <- p[(p$LAT <= 46.525) & (p$LAT >= 46.225),]
 
 # Region 3
 p = swiss[(swiss$LONG <= 8.9) & (swiss$LONG >= 8.65),]
