@@ -3,6 +3,7 @@
 ########################################
 
 library(dplyr)
+library(rgdal)
 library(raster)
 require(ggplot2)
 require(reshape2)
@@ -49,18 +50,59 @@ unlist(res)[unlist(res)!=0] %>% unique
 res.swiss <- unevenly_gridded_dataframe_to_raster(swiss, "ELEV", # colum name of raster values
                                      c("LONG", "LAT"), # column names of coodinates
                                      "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0", # CRS
-                                    0.00277 # resolution of raster
-)
+                                     0.00277 # resolution of raster
+                                    )
 
-res.swiss2 <- data.frame(cbind(coordinates(res.swiss), values(res.swiss)))
+
+
+## Overlay Swiss border and squares of example regions
+
+# Swiss border data
+path = "Y:\\swiss\\CHE_adm0.shp"
+LAYERS <- ogrListLayers(path)
+border <- readOGR(path, LAYERS)
+
+
+# Clip the Swiss elevation data by the polygon of the border
+source(".\\functions\\F_clip_raster_by_polygon.R")
+clipped.swiss <- clip.by.polygon(res.swiss, border)
+
+res.swiss2 <- data.frame(cbind(coordinates(clipped.swiss), values(clipped.swiss)))
+res.swiss3 <- res.swiss2[!is.na(res.swiss2$V3), ]
+colnames(res.swiss3) <- c("Longitude", "Latitude", "Elevation")
+
+# Add squares showing the example regions on the map
+d <- data.frame(x1=c(7.4,7.15,8.65), x2=c(7.65,7.4,8.9), y1=c(47,46.225,46.45), y2=c(47.3,46.525,46.75))
+d2 <- data.frame(cbind(d$x1 - 0.2, d$x2 + 0.2, d$y1 - 0.2, d$y2 + 0.2))
+colnames(d2) <- colnames(d)
+
+# Map SAI
+png("Y:\\swiss_map.png", width = 1300, height = 630)
+
+ggplot(res.swiss3, aes_string("Longitude", "Latitude", fill = "Elevation")) + 
+  geom_raster() +
+  scale_fill_gradientn( colors=c('#a6611a','#dfc27d','#f5f5f5','#80cdc1','#018571')) +
+  geom_rect(data = d, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), color = "black", 
+            alpha = 0, inherit.aes = FALSE) +
+  geom_rect(data = d2, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), color = "black", 
+            alpha = 0, inherit.aes = FALSE, linetype = 2) +
+  geom_polygon(data = border,aes(x = long, y = lat, group = group), fill = NA, col = "black") +
+  theme(panel.background = element_blank(),
+        text = element_text(size=15)
+  )
+dev.off()
+
 
 
 
 ################################################################################
-### Find the map resolution from dataframe
+### Fix the resolutions of example regions
 ################################################################################
 
+################################################################################
 ### Region 1
+################################################################################
+
 load(".//SAIcc_swissRegion1_25km_neighbourhood_ref.data")
 swiss.reg1 <- cbind(reg1, unlist(sai.swiss))
 colnames(swiss.reg1)[ncol(swiss.reg1)] <- "EP"
@@ -74,15 +116,15 @@ reg1.tes <- unevenly_gridded_dataframe_to_raster(swiss.reg1,
                                               0.00275 # resolution of raster
 )
 
-
+png("Y://EP.swissRegion1.png", width = 900, height = 630)
 plot_SAI(scores = data.frame(coordinates(reg1.tes)), sai = sai.swiss, nameOfsai = "EPcc", coordinateNames = c("x", "y"), colfunc)
-
+dev.off()
 
 ################################################################################
-### Find the map resolution from dataframe
-################################################################################
-
 ### Region 2
+################################################################################
+
+
 load(".//SAIcc_swissRegion2_25km_neighbourhood_ref.data")
 swiss.reg1 <- cbind(reg2, unlist(sai.swiss2))
 colnames(swiss.reg1)[ncol(swiss.reg1)] <- "EP"
@@ -96,14 +138,15 @@ reg2.tes <- unevenly_gridded_dataframe_to_raster(swiss.reg1,
                                                  0.00275 # resolution of raster
 )
 
-
+png("Y://EP.swissRegion2.png", width = 900, height = 630)
 plot_SAI(scores = data.frame(coordinates(reg2.tes)), sai = sai.swiss2, nameOfsai = "EPcc", coordinateNames = c("x", "y"), colfunc)
+dev.off()
 
 ################################################################################
-### Find the map resolution from dataframe
+#### Region 3
 ################################################################################
 
-### Region 3
+
 load(".//SAIcc_swissRegion3_25km_neighbourhood_ref.data")
 swiss.reg1 <- cbind(reg3, unlist(sai.swiss3))
 colnames(swiss.reg1)[ncol(swiss.reg1)] <- "EP"
@@ -117,5 +160,7 @@ reg3.tes <- unevenly_gridded_dataframe_to_raster(swiss.reg1,
                                                  0.00275 # resolution of raster
 )
 
-
+png("Y://EP.swissRegion3.png", width = 900, height = 630)
 plot_SAI(scores = data.frame(coordinates(reg3.tes)), sai = sai.swiss3, nameOfsai = "EPcc", coordinateNames = c("x", "y"), colfunc)
+dev.off()
+
