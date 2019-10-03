@@ -63,23 +63,20 @@ LAYERS <- ogrListLayers(path)
 border <- readOGR(path, LAYERS)
 
 
-# Clip the Swiss elevation data by the polygon of the border
-source(".\\functions\\F_clip_raster_by_polygon.R")
-clipped.swiss <- clip.by.polygon(res.swiss, border)
-
 ### Rasterize cliamte data
 tave68.s <- convert_dataframe_to_raster(swiss, res.swiss, "tave68", c("LONG", "LAT"))
 tave122.s <- convert_dataframe_to_raster(swiss, res.swiss, "tave122", c("LONG", "LAT"))
 prec49.s <- convert_dataframe_to_raster(swiss, res.swiss, "prec49", c("LONG", "LAT"))
 prec103.s <- convert_dataframe_to_raster(swiss, res.swiss, "prec103", c("LONG", "LAT"))
 
-rasters.s <- list(tave68.s, tave122.s,prec49.s,prec103.s)
+rasters.s <- list(res.swiss, tave68.s, tave122.s,prec49.s,prec103.s)
 
-clipped.swiss <- lapply(rasters.s, clip.by.polygon, border)
-res.swiss4 <- data.frame(cbind(coordinates(clipped.swiss[[1]]), values(res.swiss), sapply(clipped.swiss, values)))
-colnames(res.swiss4) <- c("Longitude", "Latitude", "Elevation", "tave68", "tave122", "prec49", "prec103")
+# Clip the Swiss elevation data by the polygon of the border
+source(".\\functions\\F_clip_raster_by_polygon.R")
+clipped.swiss2 <- lapply(rasters.s, clip.by.polygon, shape = border)
+names(clipped.swiss2) <- c("Elevation", "tave68", "tave122", "prec49","prec103")
 
-write.csv(res.swiss4, "Y://swiss_climate_clipped.csv")
+save(clipped.swiss2, file = "Y://swiss_climate_clipped.data")
 
 ################################################################################
 ### Map
