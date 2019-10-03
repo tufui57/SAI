@@ -1,5 +1,5 @@
 ########################################
-### Map the world
+### Environmental prevalence of the world 
 ########################################
 
 library(dplyr)

@@ -46,7 +46,7 @@ unlist(res)[unlist(res)!=0] %>% unique
 # If the intervals of coordinates in a dataframe are uneven, white lines will appear in the map plots. 
 # To fix this, an empty raster with correct coordinates was generated, and the dataframe was resampled on the raster.
 
-# Rasterize data
+# Rasterize elevation data
 res.swiss <- unevenly_gridded_dataframe_to_raster(swiss, "ELEV", # colum name of raster values
                                      c("LONG", "LAT"), # column names of coodinates
                                      "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0", # CRS
@@ -67,9 +67,23 @@ border <- readOGR(path, LAYERS)
 source(".\\functions\\F_clip_raster_by_polygon.R")
 clipped.swiss <- clip.by.polygon(res.swiss, border)
 
-res.swiss2 <- data.frame(cbind(coordinates(clipped.swiss), values(clipped.swiss)))
-res.swiss3 <- res.swiss2[!is.na(res.swiss2$V3), ]
-colnames(res.swiss3) <- c("Longitude", "Latitude", "Elevation")
+### Rasterize cliamte data
+tave68.s <- convert_dataframe_to_raster(swiss, res.swiss, "tave68", c("LONG", "LAT"))
+tave122.s <- convert_dataframe_to_raster(swiss, res.swiss, "tave122", c("LONG", "LAT"))
+prec49.s <- convert_dataframe_to_raster(swiss, res.swiss, "prec49", c("LONG", "LAT"))
+prec103.s <- convert_dataframe_to_raster(swiss, res.swiss, "prec103", c("LONG", "LAT"))
+
+rasters.s <- list(tave68.s, tave122.s,prec49.s,prec103.s)
+
+clipped.swiss <- lapply(rasters.s, clip.by.polygon, border)
+res.swiss4 <- data.frame(cbind(coordinates(clipped.swiss[[1]]), values(res.swiss), sapply(clipped.swiss, values)))
+colnames(res.swiss4) <- c("Longitude", "Latitude", "Elevation", "tave68", "tave122", "prec49", "prec103")
+
+write.csv(res.swiss4, "Y://swiss_climate_clipped.csv")
+
+################################################################################
+### Map
+################################################################################
 
 # Add squares showing the example regions on the map
 d <- data.frame(x1 = c(7.4,7.15,8.65), x2 = c(7.65,7.4,8.9), y1 = c(47,46.225,46.45), y2 = c(47.3,46.525,46.75))
