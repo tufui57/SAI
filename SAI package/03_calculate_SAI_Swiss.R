@@ -1,5 +1,4 @@
-
-source(".\\SAI\\SAI package\\F_SpatialAvailabilityIndex.R")
+source(".\\EP\\functions_EnvironmentalPrevalenceIndex.R")
 
 library(rgdal)
 
@@ -38,14 +37,14 @@ reg1 <- p[(p$LAT <= 47.3) & (p$LAT >= 47),]
 
 climateNames = colnames(reg1)[5:8]
 
-sai.swiss <- calc_SAI(data1 = reg1,
+sai.swiss <- calc_EP(data1 = reg1,
                       data2 = reg1_r,
                       climateNames = climateNames,
                       coordinateNames = c("LATm","LONGm"),
-                      neighbourhood.size = 25
+                      neighbourhood.size = 50
 )
 # Save
-save(sai.swiss, file = "SAIcc_swissRegion1_25km_neighbourhood_ref.data")
+save(sai.swiss, file = "SAIcc_swissRegion1_50km_neighbourhood.data")
 
 mean(sai.swiss)
 
@@ -53,22 +52,22 @@ mean(sai.swiss)
 
 # Region 2
 p = swiss[(swiss$LONG <= (7.4 + 0.25)) & (swiss$LONG >= (7.15-0.25)), ]
-reg2_r <- p[(p$LAT <= (46.55 + 0.35)) & (p$LAT >= (46.2-0.35)),]
+reg2_r <- p[(p$LAT <= (46.525 + 0.3)) & (p$LAT >= (46.225-0.3)),]
 
 # Region 2
 p = swiss[(swiss$LONG <= 7.4) & (swiss$LONG >= 7.15),]
-reg2 <- p[(p$LAT <= 46.55) & (p$LAT >= 46.2),]
+reg2 <- p[(p$LAT <= 46.525) & (p$LAT >= 46.225),]
 
 climateNames = colnames(reg2)[5:8]
 
-sai.swiss2 <- calc_SAI(data1 = reg2,
+sai.swiss2 <- calc_EP(data1 = reg2,
                        data2 = reg2_r,
                        climateNames = climateNames,
                        coordinateNames = c("LATm","LONGm"),
-                       neighbourhood.size = 25
+                       neighbourhood.size = 50
 )
 # Save
-save(sai.swiss2, file = "SAIcc_swissRegion2_25km_neighbourhood_ref.data")
+save(sai.swiss2, file = "SAIcc_swissRegion2_50km_neighbourhood.data")
 
 # Region 3
 p = swiss[(swiss$LONG <= (8.9+0.25)) & (swiss$LONG >= (8.65-0.25)), ]
@@ -77,14 +76,14 @@ reg3_r <- p[(p$LAT <= (46.75+0.3)) & (p$LAT >= (46.45-0.3)),]
 p = swiss[(swiss$LONG <= 8.9) & (swiss$LONG >= 8.65),]
 reg3 <- p[(p$LAT <= 46.75) & (p$LAT >= 46.45),]
 
-sai.swiss3 <- calc_SAI(data1 = reg3,
+sai.swiss3 <- calc_EP(data1 = reg3,
                        data2 = reg3_r,
                        climateNames = climateNames,
                        coordinateNames = c("LATm","LONGm"),
-                       neighbourhood.size = 25
+                       neighbourhood.size = 50
 )
 # Save
-save(sai.swiss3, file = "SAIcc_swissRegion3_25km_neighbourhood_ref.data")
+save(sai.swiss3, file = "SAIcc_swissRegion3_50km_neighbourhood.data")
 
 
 ##########################################################################################
@@ -97,7 +96,7 @@ reg1 <- p[(p$LAT <= 47.3) & (p$LAT >= 47),]
 
 # Region 2
 p = swiss[(swiss$LONG <= 7.4) & (swiss$LONG >= 7.15),]
-reg2 <- p[(p$LAT <= 46.55) & (p$LAT >= 46.2),]
+reg2 <- p[(p$LAT <= 46.525) & (p$LAT >= 46.225),]
 
 # Region 3
 p = swiss[(swiss$LONG <= 8.9) & (swiss$LONG >= 8.65),]
@@ -106,94 +105,53 @@ reg3 <- p[(p$LAT <= 46.75) & (p$LAT >= 46.45),]
 
 # For two different regions, SAI within a neighbourhood doesn't make sense.
 
-sai.swiss1in2 <- calc_SAI(data1 = reg1,
-                      data2 = reg2,
-                      climateNames = climateNames,
-                      coordinateNames = c("LATm","LONGm")
-)
-# Save
-save(sai.swiss1in2, file = "SAIcc_of_swissRegion1_in_region2_p.data")
-
-# tes1 <- sai.swiss1in2
-# mean(unlist(tes1))
-
-sai.swiss1in3 <- calc_SAI(data1 = reg1,
-                          data2 = reg3,
-                          climateNames = climateNames,
-                          coordinateNames = c("LATm","LONGm")
-)
-# Save
-save(sai.swiss1in3, file = "SAIcc_of_swissRegion1_in_region3_p.data")
-
-sai.swiss2in1 <- calc_SAI(data1 = reg2,
-                          data2 = reg1,
-                          climateNames = climateNames,
-                          coordinateNames = c("LATm","LONGm")
-)
-# Save
-save(sai.swiss2in1, file = "SAIcc_of_swissRegion2_in_region1_p.data")
-
-sai.swiss2in3 <- calc_SAI(data1 = reg2,
-                          data2 = reg3,
-                          climateNames = climateNames,
-                          coordinateNames = c("LATm","LONGm")
-)
-# Save
-save(sai.swiss2in3, file = "SAIcc_of_swissRegion2_in_region3_p.data")
-
-sai.swiss3in1 <- calc_SAI(data1 = reg3,
-                          data2 = reg1,
-                          climateNames = climateNames,
-                          coordinateNames = c("LATm","LONGm")
-)
-# Save
-save(sai.swiss3in1, file = "SAIcc_of_swissRegion3_in_region1_p.data")
-
-sai.swiss3in2 <- calc_SAI(data1 = reg3,
+sai.swiss1in2 <- calc_EP(data1 = reg1,
                           data2 = reg2,
                           climateNames = climateNames,
                           coordinateNames = c("LATm","LONGm")
 )
 # Save
-save(sai.swiss3in2, file = "SAIcc_of_swissRegion3_in_region2_p.data")
+save(sai.swiss1in2, file = "SAIcc_of_swissRegion1_in_region2.data")
 
+# tes1 <- sai.swiss1in2
+# mean(unlist(tes1))
 
-##########################################################################################
-### Map
-##########################################################################################
+sai.swiss1in3 <- calc_EP(data1 = reg1,
+                          data2 = reg3,
+                          climateNames = climateNames,
+                          coordinateNames = c("LATm","LONGm")
+)
+# Save
+save(sai.swiss1in3, file = "SAIcc_of_swissRegion1_in_region3.data")
 
-# Combine EP to coordinate data
-coordinateNames = c("LONG","LAT")
-sai.dat <- cbind(reg2[, coordinateNames], unlist(sai.swiss2in1))
-colnames(sai.dat)[3] <- "EPcc"
+sai.swiss2in1 <- calc_EP(data1 = reg2,
+                          data2 = reg1,
+                          climateNames = climateNames,
+                          coordinateNames = c("LATm","LONGm")
+)
+# Save
+save(sai.swiss2in1, file = "SAIcc_of_swissRegion2_in_region1.data")
 
-png("Y://EP.swissRegion2in1.png", width = 900, height = 630)
-ggplot(sai.dat) + 
-  geom_raster(aes_string(coordinateNames[1], coordinateNames[2], fill="EPcc")) +
-  theme(axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        axis.title       = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size=20)
-  )
+sai.swiss2in3 <- calc_EP(data1 = reg2,
+                          data2 = reg3,
+                          climateNames = climateNames,
+                          coordinateNames = c("LATm","LONGm")
+)
+# Save
+save(sai.swiss2in3, file = "SAIcc_of_swissRegion2_in_region3.data")
 
-dev.off()
+sai.swiss3in1 <- calc_EP(data1 = reg3,
+                          data2 = reg1,
+                          climateNames = climateNames,
+                          coordinateNames = c("LATm","LONGm")
+)
+# Save
+save(sai.swiss3in1, file = "SAIcc_of_swissRegion3_in_region1.data")
 
-load("EPcc_of_swissRegion2_in_region3.data")
-
-# Combine SAI to coordinate data
-coordinateNames = c("LONG","LAT")
-sai.dat <- cbind(reg2[, coordinateNames], unlist(sai.swiss2in3))
-colnames(sai.dat)[3] <- "EPcc"
-
-png("Y://EP.swissRegion2in3.png", width = 900, height = 630)
-ggplot(sai.dat) + 
-  geom_raster(aes_string(coordinateNames[1], coordinateNames[2], fill="EPcc")) +
-  theme(axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        axis.title       = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size=20)
-  )
-
-dev.off()
+sai.swiss3in2 <- calc_EP(data1 = reg3,
+                          data2 = reg2,
+                          climateNames = climateNames,
+                          coordinateNames = c("LATm","LONGm")
+)
+# Save
+save(sai.swiss3in2, file = "SAIcc_of_swissRegion3_in_region2.data")
