@@ -34,3 +34,21 @@ ep.world <- calc_EP(data1 = wor2,
 # Save
 save(ep.world, file = "EPcc_world.data")
 
+# Map
+wor.d <- cbind(wor2[, c("x","y")], unlist(ep.world)) %>%  as.data.frame
+colnames(wor.d) <- c("Longitude", "Latitude", "val")
+
+png("Y:\\worldEPmap.png", width = 1300, height = 630)
+
+plot_SAI(wor2, ep.world, "EPcc", c("x","y"), colfunc)
+
+
+
+
+ep.world2 <- calc_EP(data1 = wor2[1:1000,],
+                     data2 = wor2,
+                     climateNames = climateNames,
+                     coordinateNames = c("x","y")
+)
+
+
