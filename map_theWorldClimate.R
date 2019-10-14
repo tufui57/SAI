@@ -28,6 +28,7 @@ colnames(wor2) <- c("x","y", paste("bio", c(1,6,12,15), sep=""))
 
 climateNames = paste("bio", c(1,6,12,15), sep="")
 
+wor2 <- wor2[complete.cases(wor2),]
 
 ###############################################################
 # Prepare a polygon of LGM terrestrial area
