@@ -72,17 +72,17 @@ colfunc <- colorRampPalette(c("brown", "yellow", "green", "cyan", "blue", "viole
 load(".\\Scores_Acaena_landcover5km.data")
 
 # Load SAI values
-load("SAIcc_NZ_4var.data")
-sai <- load("SAIcc_NZ_4var.data")
+load("EPcc_NZ_4var_test.data")
+sai <- load("EPcc_NZ_4var_test.data")
 sai <- get(sai)
 
-nameOfsai="SAIcc"
+nameOfsai="EPcc"
 
 # Map SAI
 png(paste("Y:\\", nameOfsai ,"_5kmtest.png", sep = ""), width = 900, height = 630)
 
-myplot <- plot_SAI(scores, sai, nameOfsai, coordinateNames = c("x","y"), colfunc)
-myhist <- hist_SAI(scores, sai, nameOfsai)
+myplot <- plot_SAI(scores, sai$EP, nameOfsai, coordinateNames = c("x","y"), colfunc)
+myhist <- hist_SAI(scores, sai$EP, nameOfsai)
 
 # Plot in multiple panels
 grid.arrange(myplot, myhist,
@@ -96,17 +96,17 @@ dev.off()
 ### Load 5km data
 load(".\\Scores_Acaena_landcover5km.data")
 # # Load SAI values
-load(".\\SAIcl_NZ_p.data")
-sai <- load(".\\SAIcl_NZ_p.data")
+load(".\\EPcl_NZ_4var_test.data")
+sai <- load(".\\EPcl_NZ_4var_test.data")
 sai <- get(sai)
 
-nameOfsai="SAIcl"
+nameOfsai="EPcl"
 
 # Map SAI
 png(paste("Y:\\", nameOfsai ,"_5kmtest.png", sep = ""), width = 900, height = 630)
 
-myplot <- plot_SAI(scores, sai, nameOfsai, coordinateNames = c("x","y"), colfunc)
-myhist <- hist_SAI(scores, sai, nameOfsai)
+myplot <- plot_SAI(scores, sai$EP, nameOfsai, coordinateNames = c("x","y"), colfunc)
+myhist <- hist_SAI(scores, sai$EP, nameOfsai)
 
 # Plot in multiple panels
 grid.arrange(myplot, myhist,
