@@ -2,13 +2,23 @@
 ### Environmental prevalence of the world 
 ########################################
 
-library(dplyr)
 library(raster)
 require(ggplot2)
 require(reshape2)
 library(gridExtra)
-source(".\\functions\\F04_convert_Points_to_raster.R")
-source(".\\EP\\functions_EnvironmentalPrevalenceIndex.R")
+library(schoolmath)
+library(doFuture)
+library(foreach)
+library(plyr)
+library(dplyr)
+source(".\\GitHub\\functions\\F04_convert_Points_to_raster.R")
+source(".\\GitHub\\Environmental-prevalence\\faster_functions_EnvironmentalPrevalenceIndex.R")
+source(".\\GitHub\\Environmental-prevalence\\functions_EnvironmentalPrevalenceIndex.R")
+
+### Setup for multi-core use
+registerDoFuture()  ## tells foreach futures should be used
+plan(multisession)  ## specifies what type of futures
+
 #################################################################################
 ### Function to daw a map of spatial availability index 
 #################################################################################
@@ -87,13 +97,14 @@ climateNames = paste("bio", c(1,6,12,15), sep="")
 
 wor2 <- wor2[complete.cases(wor2),]
 
-ep.world <- calc_EP(data1 = wor2,
-                      data2 = wor2,
+system.time(
+  ep.world <- multicore_calc_EPcc_within_whole_target_areas(data1 = wor2,
                       climateNames = climateNames,
                       coordinateNames = c("x","y")
+                      )
 )
 # Save
-save(ep.world, file = "EPcc_world.data")
+save(ep.world, file = "EPcc_worldtest.data")
 
 
 # Map
