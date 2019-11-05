@@ -23,11 +23,13 @@ climateNames <- c("bioclim1", "bioclim6", "bioclim12", "bioclim15")
 ##########################################################################
 ###### EP of current climates under current conditions; EPcc
 ###########################################################################
-
+timestamp()
 ### EP within Whole NZ
-ep.i <- multicore_calc_EPcc_within_whole_target_areas(data1 = scores,
+ep.i <- multicore_calc_EPcc_within_neighbourhood_areas(data1 = scores[1:10000,],
+                                                       neighbourhood.size = 500000,
                                                       climateNames = climateNames,
                                                       coordinateNames = c("x","y")
 )
-save(ep.i, file = "EPcc_NZ_1km_4var.data")
+timestamp()
 
+save(ep.i, file = "EPcc_NZ_1km_4var.data")
